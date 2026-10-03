@@ -53,7 +53,7 @@ describe('toComplianceCsv', () => {
   it('lists only delivered donations, with the SB 1383 fields', () => {
     const csv = toComplianceCsv([listing('delivered', 25, 'a'), listing('open', 7, 'b')], DONORS, RECIPIENTS, '2026-10-03');
     const lines = csv.split('\r\n');
-    expect(lines[0]).toBe('Date,Donor,Food recovery organization,Organization city,Food types,Pounds recovered,Picked up,Delivered');
+    expect(lines[0]).toBe('Date,Donor,Food recovery organization,Organization address,Food types,Pounds recovered,Picked up,Delivered');
     expect(lines).toHaveLength(2);
     expect(lines[1]).toBe('2026-10-03,Golden Crust Bakery,Valley Community Pantry,Dublin,bakery,25,5:50 PM,6:05 PM');
   });

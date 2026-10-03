@@ -1,46 +1,71 @@
 # SecondServe
 
-**Surplus food from local businesses, matched to food programs and volunteer drivers before closing time.**
+**Good food deserves a second serving.** SecondServe takes extra food from local businesses and gets it to food banks and shelters, with volunteer drivers, before closing time.
 
 Built in one day at Dublin HacX 2026 in San Ramon, California.
 
 ## The problem
 
-Every evening, bakeries, grocery stores, restaurants and cafeterias have good food left over. Nearby food pantries, shelters and youth programs need it. But they rarely connect in time, because nobody is coordinating the details:
+- In 2024, 29% of the U.S. food supply went unsold or uneaten ([ReFED](https://refed.org/food-waste/the-problem/)).
+- In 2024, 47.9 million people in the U.S. lived in food-insecure households, meaning they couldn't always afford enough food ([USDA ERS](https://ers.usda.gov/publications/113622)).
+- California's SB 1383 now requires large food businesses to act ([CalRecycle](https://calrecycle.ca.gov/organics/slcp/foodrecovery/donors/)):
+  - **Tier 1, since January 1, 2022:** supermarkets with $2 million or more in yearly sales, grocery stores of 10,000 square feet or more, food service providers, food distributors and wholesale food vendors.
+  - **Tier 2, since January 1, 2024:** restaurants with 250 or more seats or 5,000 square feet or more, hotels with on-site food facilities and 200 or more rooms, health facilities with on-site food facilities and 100 or more beds, large venues and events, state agency cafeterias above the same size limits, and schools with on-site food facilities.
+  - **What they must do:** arrange to recover the maximum amount of edible food they would otherwise throw away, through a written agreement with a food recovery organization.
+  - **What they must keep records of:** each partner's name, address and contact information, the types of food, how often it is collected, and how many pounds are recovered each month.
 
-- **Will it fit?** A youth center with no fridge can't take yogurt. A vegetarian kitchen can't take chicken. A nut-free program can't take pesto.
-- **Can someone get it there?** Hot or cold food has to travel quickly, ideally in a cooler, and the program has to still be open when it arrives.
-- **Is anyone keeping records?** California's SB 1383 law requires large grocery stores and food distributors (since 2022) and large restaurants, hotels and other food businesses (since 2024) to donate edible food they would otherwise throw away. They also have to keep records of who received it, what types of food, and how many pounds per month.
-
-A simple "post your leftovers" board doesn't solve this. SecondServe handles the coordination.
+The hard part is coordination. A youth center with no fridge can't take yogurt. A vegetarian kitchen can't take chicken. Hot food has to move fast, and somebody has to drive it there before the program closes.
 
 ## What it does
 
-1. **Post surplus in plain words.** A business types something like *"2 trays of chicken alfredo that need to stay cold and a box of bananas, pick up before 9"*. AI turns it into a structured listing with items, estimated pounds, storage needs, allergens and a pickup deadline. A built-in parser takes over if the AI is unavailable, so posting always works.
-2. **Match it to the right food program.** Every program is scored on distance, room left today, whether it asked for that kind of food, and how much time is left before it closes. Hard rules rule programs out: no fridge for cold food, no hot meals, vegetarian-only, nut-free, closed or full. **Every match shows its reasons, and every rejection says why.**
-3. **Plan the pickup.** SecondServe picks a free volunteer driver with enough room. Perishable trips longer than 30 minutes require a driver with a cooler. The map shows the driver's real road route and moves the driver along it.
-4. **Track the outcome.** It counts pounds delivered, estimated meals (1.2 lbs = 1 meal, Feeding America's measure), food on the road, and food that *couldn't* be placed in time, because honest numbers matter more than sign-up counts. One click exports an **SB 1383 record log** (CSV) for donors.
-5. **Predict surplus before it's posted.** From past listings, SecondServe learns patterns, such as "Golden Crust Bakery usually has about 37 lbs of bread around 5:50 PM on Saturdays (seen 8 of the last 8)", so programs can get a heads-up. These are labeled as estimates, not promises.
+1. **Share extra food in plain words.** A business types something like "2 trays of chicken alfredo that need to stay cold, pick up before 9". AI turns that into a listing with items, estimated pounds, how to keep the food, allergens and a pickup time.
+   - A keyword check runs alongside the AI. If either one spots an allergen or meat, the warning stays.
+   - If the AI is unavailable, a built-in reader takes over, so posting always works.
+2. **Find the right home for it.** Every food program gets a score out of 100:
+
+   | What it measures | Points |
+   | --- | ---: |
+   | Distance | 35 |
+   | Room left today | 25 |
+   | Whether it asked for that kind of food | 25 |
+   | Time before closing | 15 |
+
+   - Hard rules rule a program out completely: no fridge for cold food, no hot meals, vegetarian only, nut-free, full, or closed.
+   - Every match shows its reasons, and every rejection says why.
+3. **Plan the pickup.** SecondServe picks a free volunteer driver with enough room.
+   - Our own rule: perishable trips longer than 30 minutes need a cooler. That keeps deliveries well inside the USDA's limit of 2 hours out of refrigeration (1 hour above 90°F) ([USDA FSIS](https://www.fsis.usda.gov/food-safety/safe-food-handling-and-preparation/food-safety-basics/danger-zone-40f-140f)).
+4. **Count what matters.** It counts pounds delivered, meals (Feeding America counts about 1.2 pounds of food as one meal, [source](https://www.feedingamerica.org/ways-to-give/faq/about-our-claims)), food on the road, and food that didn't make it in time. A one-click spreadsheet of donation records covers the per-donation details SB 1383 asks for.
+5. **Predict extra food.** From past posts, SecondServe learns patterns like "Golden Crust usually has about 37 lbs of bread around 5:50 PM on Saturdays (8 of the last 8)", so food banks can get ready. These are labeled as predictions, not promises.
+6. **Works anywhere.** Search any city or address, or use your location. The demo network moves there and lands on real streets.
 
 ## Try the demo
 
-Press **Run the evening** to play a sample Saturday night in the Tri-Valley. Listings appear, get matched, and drivers move across the map. Then press **+ Post surplus** to post your own food with AI.
+- **The top of the page:** a scroll-driven story follows one bakery's bread from closing time to the dinner table.
+- **The live evening:** press **Play the evening**, or **Share extra food** to post your own.
 
-All businesses, food programs and volunteers in the demo are **fictional sample data**.
+All businesses, food programs and volunteers are **made-up sample data**. The map, streets, road routes and AI are real.
 
-## How it works
+## How it's built
 
-| Piece | Where | What it does |
-| --- | --- | --- |
-| Matching engine | `src/lib/matching.ts` | Scores each program (distance 35, capacity 25, need 25, time 15), applies hard rules, picks a driver, explains every decision |
-| Evening simulation | `src/lib/simulation.ts` | State machine: posted → matched → picked up → delivered, or expired. Never mutates state |
-| AI listing parser | `src/lib/azure.ts`, `src/app/api/parse/route.ts` | Sends the description to an AI model on Azure AI Foundry (DeepSeek), then validates the JSON reply with Zod |
-| Built-in parser | `src/lib/parseListing.ts` | No-AI backup that reads quantities, units, food types, allergens and pickup times |
-| Predictions | `src/lib/prediction.ts` | Weeks seen ÷ weeks tracked for each business and weekday, plus the typical time and amount |
-| Impact and SB 1383 log | `src/lib/impact.ts` | Totals, meals, and a CSV export that guards against spreadsheet formula injection |
-| Map | `src/components/MapView.tsx` | Leaflet + OpenStreetMap, road routes from OSRM, falling back to straight lines when offline |
+| Piece | Where |
+| --- | --- |
+| Matching engine and driver choice | `src/lib/matching.ts` |
+| Evening simulation (posted → matched → picked up → delivered) | `src/lib/simulation.ts` |
+| AI reader (Azure AI Foundry) with a strict format check and allergen double-check | `src/lib/azure.ts`, `src/app/api/parse/route.ts`, `src/lib/parseListing.ts` |
+| Predictions | `src/lib/prediction.ts` |
+| Impact numbers and the donation-records spreadsheet | `src/lib/impact.ts` |
+| Moving the demo to any city, place search, road snapping | `src/lib/relocate.ts`, `src/lib/places.ts` |
+| Scroll story | `src/components/ScrollStory.tsx` |
 
-The AI key stays on the server and is never sent to the browser. Tech: Next.js 16, React 19, TypeScript, Tailwind CSS, Leaflet, Zod and Vitest (47 tests).
+- **How the scroll story moves:** each frame it eases toward your scroll position, but a **speed limiter** caps it at 0.85 of the story per second, so a hard fling glides instead of jumping.
+- **Why it stays fast:** it only changes a few CSS values, one SVG transform and two text labels per frame, and it stops itself once it catches up.
+- **Motion setting:** follows the device's "reduce motion" setting by default, and the **Motion** button switches between full and calm.
+- **Free map services, used within their rules:** OpenStreetMap tiles, Nominatim place search and OSRM routes.
+  - Requests are queued at no more than 1 per second.
+  - Searches are remembered so they aren't repeated.
+  - There is no search-as-you-type.
+- **Security:** the AI key stays on the server and is never sent to the browser.
+- **Stack:** Next.js 16, React 19, TypeScript, Tailwind CSS, Leaflet, Zod and Vitest (67 tests).
 
 ## Run it yourself
 
@@ -49,7 +74,7 @@ cd secondserve
 npm install
 ```
 
-Create `secondserve/.env.local` (it's git-ignored, so never commit it):
+Create `secondserve/.env.local`. It's git-ignored, so it is never committed.
 
 ```
 AZURE_AI_ENDPOINT=https://<your-resource>.services.ai.azure.com/openai/v1/chat/completions
@@ -61,23 +86,27 @@ Then:
 
 ```bash
 npm run dev     # http://localhost:3000
-npm test        # 47 unit tests
+npm test        # 67 unit tests
 ```
 
-Without `.env.local` everything still works; listings are organized by the built-in parser instead of AI.
+Without `.env.local` everything still works, and posts are read by the built-in reader instead of AI.
 
-## Limits and what's next
+## A note on donor protection
 
-- Real accounts for businesses, food programs and drivers, with SMS alerts in place of the on-screen heads-up.
-- Smarter routing that batches several pickups into one driver run.
-- Food-safety sign-off at pickup (temperature check, time packed) to support liability protection for donors.
-- Learning predictions from real listing history instead of sample patterns.
+The federal Bill Emerson Good Samaritan Food Donation Act protects people who donate apparently wholesome food in good faith to a nonprofit. It covers both civil and criminal liability, except for gross negligence or intentional misconduct ([42 U.S.C. 1791](https://www.law.cornell.edu/uscode/text/42/1791)).
 
-## Sources
+A 2023 update extended this protection to:
 
-- CalRecycle, SB 1383 organic waste and edible food recovery: https://calrecycle.ca.gov/organics/slcp/
-- Feeding America, how they count meals (1.2 lbs of food = 1 meal): https://www.feedingamerica.org/ways-to-give/faq/about-our-claims
+- businesses, including grocers, restaurants, caterers and schools, that give food directly to people in need for free;
+- food passed on at a low "Good Samaritan reduced price" that only covers costs.
+
+## What's next
+
+- Real accounts for businesses, food banks and drivers, with text alerts.
+- Combining several pickups into one driver trip.
+- A quick food-safety check at pickup (temperature and time packed).
+- Learning predictions from real post history.
 
 ## Credits
 
-Built by [@parthbindal](https://github.com/parthbindal) at Dublin HacX 2026, with help from Claude Code (an AI coding assistant). Map data © OpenStreetMap contributors. Routes by OSRM.
+Built by [@parthbindal](https://github.com/parthbindal) at Dublin HacX 2026, with help from Claude Code (an AI coding assistant). Map data © OpenStreetMap contributors. Place search by Nominatim. Routes by OSRM.

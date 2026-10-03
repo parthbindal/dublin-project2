@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { builtinParse, extractJsonObject, parseModelReply, parsePickupTime } from './parseListing';
+import { builtinParse, extractJsonObject, parseModelReply, parsePickupTime, withSaferDietary } from './parseListing';
+import type { ListingDraft } from './types';
 
 // A real reply from the Azure DeepSeek model during testing.
 const REAL_REPLY =
@@ -79,6 +80,29 @@ describe('builtinParse', () => {
 
   it('never returns an empty listing', () => {
     expect(builtinParse('asdf qwerty').items).toHaveLength(1);
+  });
+});
+
+describe('withSaferDietary', () => {
+  function realDraft(): ListingDraft {
+    const draft = parseModelReply(REAL_REPLY);
+    if (!draft) throw new Error('expected the real reply to parse');
+    return draft;
+  }
+
+  it('keeps an allergen the AI missed', () => {
+    const draft = realDraft();
+    const aiMissed = { ...draft, dietary: { ...draft.dietary, containsNuts: false, containsDairy: false } };
+    const safer = withSaferDietary(aiMissed, '18 pesto sandwiches, keep cold');
+    expect(safer.dietary.containsNuts).toBe(true);
+    expect(safer.dietary.containsDairy).toBe(true);
+    expect(safer.dietary.vegan).toBe(false);
+  });
+
+  it('never calls food vegetarian when meat is mentioned', () => {
+    const draft = realDraft();
+    const aiSaidVeg = { ...draft, dietary: { ...draft.dietary, vegetarian: true } };
+    expect(withSaferDietary(aiSaidVeg, '2 trays of chicken pasta').dietary.vegetarian).toBe(false);
   });
 });
 

@@ -3,7 +3,7 @@
 // doesn't validate, the built-in parser answers instead, so posting food always works.
 import { z } from 'zod';
 import { parseWithAzure } from '@/lib/azure';
-import { builtinParse } from '@/lib/parseListing';
+import { builtinParse, withSaferDietary } from '@/lib/parseListing';
 
 const MAX_TEXT_LENGTH = 1000;
 
@@ -22,7 +22,7 @@ export async function POST(request: Request) {
   }
   const { text } = parsed.data;
   const ai = await parseWithAzure(text);
-  if (ai.draft) return Response.json({ source: 'ai', draft: ai.draft });
+  if (ai.draft) return Response.json({ source: 'ai', draft: withSaferDietary(ai.draft, text) });
   return Response.json({
     source: 'builtin',
     draft: builtinParse(text),

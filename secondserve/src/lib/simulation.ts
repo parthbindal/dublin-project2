@@ -3,14 +3,25 @@
 import { LBS_PER_MEAL } from './impact';
 import { formatClock, parseHHMM, round1, summarizeItems } from './format';
 import { planMatch } from './matching';
-import { DONORS, DRIVERS, RECIPIENTS, type ScenarioPost } from './sampleData';
+import { DEFAULT_NETWORK, type Network } from './relocate';
+import type { ScenarioPost } from './sampleData';
 import type { AppState, DraftSource, EventKind, FeedEvent, Listing, ListingDraft } from './types';
 
 const MAX_EVENTS = 60;
 export const DEFAULT_PICKUP_WINDOW_MIN = 120;
 
-export function createInitialState(weekday: number, now: number): AppState {
-  return { now, weekday, donors: DONORS, recipients: RECIPIENTS, drivers: DRIVERS, listings: [], events: [], nextId: 1 };
+export function createInitialState(weekday: number, now: number, network: Network = DEFAULT_NETWORK): AppState {
+  return {
+    now,
+    weekday,
+    areaName: network.areaName,
+    donors: network.donors,
+    recipients: network.recipients,
+    drivers: network.drivers,
+    listings: [],
+    events: [],
+    nextId: 1,
+  };
 }
 
 export function logEvent(state: AppState, kind: EventKind, text: string): AppState {

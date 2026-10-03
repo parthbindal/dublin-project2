@@ -1,8 +1,10 @@
 import { formatClock, WEEKDAYS } from '@/lib/format';
+import { Icon } from './ui';
 
 type Props = {
   now: number;
   weekday: number;
+  areaName: string;
   isRunning: boolean;
   isFinished: boolean;
   speed: number;
@@ -14,63 +16,57 @@ type Props = {
   onExport: () => void;
 };
 
-const GHOST_BUTTON = 'rounded-full px-3 py-2 text-sm text-paper/85 ring-1 ring-paper/25 transition hover:bg-paper/10';
-
-export function Header({
-  now, weekday, isRunning, isFinished, speed, speeds, onToggleRun, onSpeedChange, onReset, onPost, onExport,
+/** The sticky control bar for the live evening: clock, play, speed and actions. */
+export function ControlBar({
+  now, weekday, areaName, isRunning, isFinished, speed, speeds, onToggleRun, onSpeedChange, onReset, onPost, onExport,
 }: Props) {
-  const runLabel = isFinished ? 'Evening complete' : isRunning ? 'Pause' : '▶ Run the evening';
+  const runLabel = isFinished ? 'Evening finished' : isRunning ? 'Pause' : 'Play the evening';
   return (
-    <header className="flex flex-wrap items-center gap-x-6 gap-y-4 rounded-3xl bg-ink px-5 py-4 text-paper shadow-lg md:px-7">
-      <div className="mr-auto min-w-[240px]">
-        <h1 className="font-display text-3xl font-black tracking-tight md:text-4xl">
-          Second<span className="text-mustard">Serve</span>
-        </h1>
-        <p className="text-sm text-paper/70">Surplus food, matched to people who need it before closing time.</p>
-      </div>
-      <div className="rounded-2xl bg-paper/10 px-4 py-2 text-center">
-        <div className="text-[11px] font-semibold uppercase tracking-[0.2em] text-paper/60">
-          {WEEKDAYS[weekday]} · Tri-Valley, CA
+    <div className="sticky top-0 z-[700] -mx-5 border-y-[1.5px] border-ink bg-paper px-5 py-3 md:-mx-10 md:px-10">
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+        <div className="mr-auto flex min-w-0 items-baseline gap-3">
+          <span className="font-display text-3xl font-semibold tabular-nums">{formatClock(now)}</span>
+          <span className="eyebrow truncate">
+            {WEEKDAYS[weekday]} in {areaName}
+          </span>
         </div>
-        <div className="font-display text-2xl font-bold tabular-nums">{formatClock(now)}</div>
-      </div>
-      <div className="flex flex-wrap items-center gap-2">
         <button
           type="button"
           onClick={onToggleRun}
           disabled={isFinished}
-          className="rounded-full bg-mustard px-4 py-2 font-semibold text-ink shadow transition hover:brightness-105 disabled:opacity-60"
+          className={`btn btn-honey ${!isRunning && !isFinished ? 'animate-nudge' : ''}`}
         >
+          <Icon name={isRunning ? 'pause' : 'play'} className="h-4 w-4" />
           {runLabel}
         </button>
-        <label className="flex items-center gap-1.5 text-sm text-paper/80">
+        <label className="flex items-center gap-1.5 text-sm text-ink-soft">
           Speed
-          <select
-            value={speed}
-            onChange={(event) => onSpeedChange(Number(event.target.value))}
-            className="rounded-full bg-paper/10 px-2 py-1.5 text-paper"
-          >
+          <select value={speed} onChange={(event) => onSpeedChange(Number(event.target.value))} className="field px-2 py-1.5 text-ink">
             {speeds.map((s) => (
-              <option key={s} value={s} className="text-ink">
+              <option key={s} value={s}>
                 {s}×
               </option>
             ))}
           </select>
         </label>
-        <button type="button" onClick={onReset} className={GHOST_BUTTON}>
-          Reset
+        <button type="button" onClick={onReset} className="btn btn-quiet">
+          <Icon name="restart" className="h-4 w-4" />
+          Start over
+        </button>
+        <button type="button" onClick={onPost} className="btn btn-primary">
+          <Icon name="plus" className="h-4 w-4" />
+          Share extra food
         </button>
         <button
           type="button"
-          onClick={onPost}
-          className="rounded-full bg-tomato px-4 py-2 font-semibold text-paper shadow transition hover:brightness-110"
+          onClick={onExport}
+          className="btn btn-quiet"
+          title="A spreadsheet of tonight's donations: who gave, who received, food types and pounds. California's SB 1383 law asks large food businesses to keep records like these."
         >
-          + Post surplus
-        </button>
-        <button type="button" onClick={onExport} className={GHOST_BUTTON}>
-          Export SB 1383 log
+          <Icon name="download" className="h-4 w-4" />
+          Donation records
         </button>
       </div>
-    </header>
+    </div>
   );
 }

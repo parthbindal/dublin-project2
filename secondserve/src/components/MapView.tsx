@@ -6,29 +6,32 @@ import { useEffect, useMemo, useState } from 'react';
 import { MapContainer, Marker, Polyline, TileLayer, Tooltip, useMap } from 'react-leaflet';
 import { interpolateAlong } from '@/lib/geo';
 import { LOADING_MIN } from '@/lib/matching';
+import { fetchRoadPath } from '@/lib/places';
 import type { AppState, Donor, Driver, LatLng, Listing, Match, Recipient } from '@/lib/types';
-import { DONOR_EMOJI } from './ui';
+import { DONOR_ICON, iconMarkup, type IconName } from './ui';
 
 type PinKind = 'donor' | 'recipient' | 'driver';
 type Tuple = [number, number];
 
 const TILE_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
 const TILE_ATTRIBUTION = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors · Routes: OSRM';
-const FIT_PADDING: Tuple = [36, 36];
+const FIT_PADDING: Tuple = [40, 40];
 const ACTIVE = new Set<Listing['status']>(['matched', 'picked-up']);
 
 const toTuple = (point: LatLng): Tuple => [point.lat, point.lng];
-const vehicleEmoji = (driver: Driver) => (driver.vehicle.includes('van') ? '🚐' : driver.vehicle.includes('SUV') ? '🚙' : '🚗');
+const vehicleIcon = (driver: Driver): IconName => (driver.vehicle.includes('van') ? 'van' : 'car');
+const ROUTE_COLOR = { toPickup: 'oklch(0.66 0.12 72)', delivering: 'oklch(0.52 0.07 250)', delivered: 'oklch(0.47 0.07 148)' };
 
 const iconCache = new Map<string, L.DivIcon>();
-function pinIcon(kind: PinKind, emoji: string, isPulsing = false): L.DivIcon {
-  const key = `${kind}|${emoji}|${isPulsing}`;
+function pinIcon(kind: PinKind, symbol: IconName, options: { isPulsing?: boolean; isMoving?: boolean } = {}): L.DivIcon {
+  const { isPulsing = false, isMoving = false } = options;
+  const key = `${kind}|${symbol}|${isPulsing}|${isMoving}`;
   const cached = iconCache.get(key);
   if (cached) return cached;
-  const size = kind === 'driver' ? 30 : 34;
+  const size = kind === 'driver' ? 28 : 32;
   const icon = L.divIcon({
-    className: 'pin-wrap',
-    html: `<div class="pin pin-${kind}${isPulsing ? ' pin-pulse' : ''}">${emoji}</div>`,
+    className: isMoving ? 'pin-wrap pin-wrap-moving' : 'pin-wrap',
+    html: `<div class="pin pin-${kind}${isPulsing ? ' pin-pulse' : ''}">${iconMarkup(symbol)}</div>`,
     iconSize: [size, size],
     iconAnchor: [size / 2, size / 2],
   });
@@ -36,24 +39,11 @@ function pinIcon(kind: PinKind, emoji: string, isPulsing = false): L.DivIcon {
   return icon;
 }
 
-// ---------- Road routes from the public OSRM server, with a straight-line fallback ----------
+// ---------- Road routes (OSRM, rate-limited in places.ts) with a straight-line fallback ----------
 
 const roadCache = new Map<string, LatLng[]>();
 const routeKey = (from: LatLng, to: LatLng) =>
   `${from.lng.toFixed(5)},${from.lat.toFixed(5)};${to.lng.toFixed(5)},${to.lat.toFixed(5)}`;
-
-async function fetchRoad(from: LatLng, to: LatLng, signal: AbortSignal): Promise<LatLng[] | null> {
-  const url = `https://router.project-osrm.org/route/v1/driving/${routeKey(from, to)}?overview=full&geometries=geojson`;
-  const response = await fetch(url, { signal });
-  if (!response.ok) return null;
-  const data: unknown = await response.json();
-  const coords = (data as { routes?: Array<{ geometry?: { coordinates?: unknown } }> }).routes?.[0]?.geometry?.coordinates;
-  if (!Array.isArray(coords)) return null;
-  const points = coords
-    .filter((c): c is [number, number] => Array.isArray(c) && typeof c[0] === 'number' && typeof c[1] === 'number')
-    .map(([lng, lat]) => ({ lat, lng }));
-  return points.length >= 2 ? points : null;
-}
 
 function useRoadPath(from: LatLng, to: LatLng): LatLng[] {
   const key = routeKey(from, to);
@@ -61,7 +51,7 @@ function useRoadPath(from: LatLng, to: LatLng): LatLng[] {
   useEffect(() => {
     if (roadCache.has(key)) return undefined;
     const controller = new AbortController();
-    fetchRoad(from, to, controller.signal)
+    fetchRoadPath(from, to, controller.signal)
       .then((path) => {
         if (!path) return;
         roadCache.set(key, path);
@@ -99,19 +89,29 @@ function ActiveRoute({ listing, match, donor, recipient, driver, now, isSelected
   const toRecipient = useRoadPath(donor.location, recipient.location);
   const isDelivered = listing.status === 'delivered';
   const weight = isSelected ? 7 : 4;
+  const status = listing.status === 'matched' ? 'driving to pick up' : 'delivering';
   return (
     <>
       {listing.status === 'matched' && (
-        <Polyline positions={toDonor.map(toTuple)} pathOptions={{ color: '#e3a21a', weight, opacity: 0.95, dashArray: '2 10', lineCap: 'round' }} />
+        <Polyline positions={toDonor.map(toTuple)} pathOptions={{ color: ROUTE_COLOR.toPickup, weight, opacity: 0.95, dashArray: '2 10', lineCap: 'round' }} />
       )}
       <Polyline
         positions={toRecipient.map(toTuple)}
-        pathOptions={{ color: isDelivered ? '#2d8a4e' : '#2f6fd1', weight, opacity: isDelivered ? 0.5 : 0.9 }}
+        pathOptions={{
+          color: isDelivered ? ROUTE_COLOR.delivered : ROUTE_COLOR.delivering,
+          weight,
+          opacity: isDelivered ? 0.55 : 0.9,
+          className: 'route-draw',
+        }}
       />
       {!isDelivered && (
-        <Marker position={toTuple(driverPosition(match, now, toDonor, toRecipient))} icon={pinIcon('driver', vehicleEmoji(driver))} zIndexOffset={1000}>
+        <Marker
+          position={toTuple(driverPosition(match, now, toDonor, toRecipient))}
+          icon={pinIcon('driver', vehicleIcon(driver), { isMoving: true })}
+          zIndexOffset={1000}
+        >
           <Tooltip direction="top" offset={[0, -14]}>
-            {driver.name} · {driver.vehicle}
+            {driver.name} ({driver.vehicle}) is {status}
           </Tooltip>
         </Marker>
       )}
@@ -128,7 +128,7 @@ function RouteFor({ listing, state, isSelected }: { listing: Listing; state: App
   return <ActiveRoute listing={listing} match={match} donor={donor} recipient={recipient} driver={driver} now={state.now} isSelected={isSelected} />;
 }
 
-/** Re-fits the map whenever its box changes size (first layout, window resize), so every pin stays in view. */
+/** Re-fits the map whenever its size or the area changes, so every pin stays in view. */
 function KeepInView({ bounds }: { bounds: L.LatLngBounds }) {
   const map = useMap();
   useEffect(() => {
@@ -143,6 +143,8 @@ function KeepInView({ bounds }: { bounds: L.LatLngBounds }) {
   }, [map, bounds]);
   return null;
 }
+
+const where = (place: { street?: string; city: string }) => (place.street ? `${place.street}, ${place.city}` : place.city);
 
 type Props = {
   state: AppState;
@@ -160,18 +162,21 @@ export default function MapView({ state, selectedId, onSelect }: Props) {
   const waitingDonorIds = new Set(state.listings.filter((l) => l.status === 'open' || l.status === 'matched').map((l) => l.donorId));
 
   return (
-    <MapContainer bounds={bounds} boundsOptions={{ padding: FIT_PADDING }} scrollWheelZoom className="h-full w-full">
+    // Scroll-wheel zoom is off so scrolling the page never gets trapped by the map. Use + and -, pinch, or double-click.
+    <MapContainer bounds={bounds} boundsOptions={{ padding: FIT_PADDING }} scrollWheelZoom={false} className="h-full w-full">
       <TileLayer url={TILE_URL} attribution={TILE_ATTRIBUTION} />
       <KeepInView bounds={bounds} />
       {routes.map((listing) => (
         <RouteFor key={listing.id} listing={listing} state={state} isSelected={listing.id === selectedId} />
       ))}
       {state.recipients.map((recipient) => (
-        <Marker key={recipient.id} position={toTuple(recipient.location)} icon={pinIcon('recipient', '🤝')}>
+        <Marker key={recipient.id} position={toTuple(recipient.location)} icon={pinIcon('recipient', 'home')}>
           <Tooltip direction="top" offset={[0, -16]}>
             <strong>{recipient.name}</strong>
             <br />
-            {recipient.city} · received {recipient.receivedLbs} of {recipient.capacityLbs} lbs today
+            {where(recipient)}
+            <br />
+            Received {recipient.receivedLbs} of the {recipient.capacityLbs} lbs it can take today
           </Tooltip>
         </Marker>
       ))}
@@ -181,14 +186,14 @@ export default function MapView({ state, selectedId, onSelect }: Props) {
           <Marker
             key={donor.id}
             position={toTuple(donor.location)}
-            icon={pinIcon('donor', DONOR_EMOJI[donor.kind], waitingDonorIds.has(donor.id))}
+            icon={pinIcon('donor', DONOR_ICON[donor.kind], { isPulsing: waitingDonorIds.has(donor.id) })}
             eventHandlers={{ click: () => latestId && onSelect(latestId) }}
           >
             <Tooltip direction="top" offset={[0, -16]}>
               <strong>{donor.name}</strong>
               <br />
-              {donor.city}
-              {latestId ? ' · click to see its listing' : ''}
+              {where(donor)}
+              {latestId ? <><br />Click to see its food</> : null}
             </Tooltip>
           </Marker>
         );
@@ -196,9 +201,9 @@ export default function MapView({ state, selectedId, onSelect }: Props) {
       {state.drivers
         .filter((driver) => !busyDriverIds.has(driver.id))
         .map((driver) => (
-          <Marker key={driver.id} position={toTuple(driver.location)} icon={pinIcon('driver', vehicleEmoji(driver))}>
+          <Marker key={driver.id} position={toTuple(driver.location)} icon={pinIcon('driver', vehicleIcon(driver))}>
             <Tooltip direction="top" offset={[0, -14]}>
-              {driver.name} · {driver.vehicle} · available
+              {driver.name} ({driver.vehicle}) is free to drive
             </Tooltip>
           </Marker>
         ))}

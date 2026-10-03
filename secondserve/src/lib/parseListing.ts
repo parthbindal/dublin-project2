@@ -103,9 +103,10 @@ const FILLER = new Set([
   'today', 'tonight', 'full', 'half', 'i', 'us', 'my',
 ]);
 
-const MEAT = /chicken|beef|pork|fish|salmon|turkey|meat|\bham\b|sausage|bacon|pepperoni|shrimp/i;
-const NUTS = /\b(nuts?|almonds?|peanuts?|cashews?|walnuts?|pecans?|pistachios?|hazelnuts?|pine nuts?)\b/i;
-const DAIRY = /milk|yogh?urt|cheese|butter|cream|alfredo|pizza|lasagna|latte|parmesan/i;
+const MEAT = /chicken|beef|pork|fish|salmon|tuna|turkey|meat|\bham\b|sausage|bacon|pepperoni|shrimp|lamb|anchov/i;
+// Pesto is usually made with pine nuts and parmesan, so it is flagged for both. Better safe for allergies.
+const NUTS = /\b(nuts?|almonds?|peanuts?|cashews?|walnuts?|pecans?|pistachios?|hazelnuts?|pine nuts?|pesto|praline|marzipan)\b/i;
+const DAIRY = /milk|yogh?urt|cheese|butter|cream|alfredo|pizza|lasagna|latte|parmesan|pesto|paneer|ghee|whey|custard/i;
 const EGG = /\beggs?\b/i;
 const GLUTEN = /bread|bagel|pasta|flour|wheat|cake|muffin|pizza|sandwich|croissant|pastr|cookie|\bbuns?\b|noodle|lasagna|tortilla|donut|doughnut|dumpling/i;
 
@@ -155,7 +156,7 @@ function detectStorage(text: string, items: FoodItem[]): Storage {
   return coldWords || perishable ? 'refrigerated' : 'shelf-stable';
 }
 
-function detectDietary(text: string): Dietary {
+export function detectDietary(text: string): Dietary {
   const vegetarian = !MEAT.test(text);
   const containsDairy = DAIRY.test(text);
   return {
@@ -164,6 +165,27 @@ function detectDietary(text: string): Dietary {
     containsNuts: NUTS.test(text),
     containsDairy,
     containsGluten: GLUTEN.test(text),
+  };
+}
+
+/**
+ * Allergen double-check for AI answers. If either the AI or the keyword check finds an allergen
+ * or meat, we keep the warning. Missing a real allergen is worse than a false alarm.
+ */
+export function withSaferDietary(draft: ListingDraft, text: string): ListingDraft {
+  const ai = draft.dietary;
+  const words = detectDietary(text);
+  const containsDairy = ai.containsDairy || words.containsDairy;
+  const vegetarian = ai.vegetarian && words.vegetarian;
+  return {
+    ...draft,
+    dietary: {
+      vegetarian,
+      vegan: vegetarian && ai.vegan && words.vegan && !containsDairy,
+      containsNuts: ai.containsNuts || words.containsNuts,
+      containsDairy,
+      containsGluten: ai.containsGluten || words.containsGluten,
+    },
   };
 }
 

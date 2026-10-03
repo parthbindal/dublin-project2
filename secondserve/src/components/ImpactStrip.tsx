@@ -1,34 +1,39 @@
 import { LBS_PER_MEAL, type ImpactTotals } from '@/lib/impact';
+import { CountUp } from './ui';
 
 type StatProps = {
   label: string;
-  value: string | number;
+  value: number;
+  unit?: string;
   hint?: string;
 };
 
-function Stat({ label, value, hint }: StatProps) {
+function Stat({ label, value, unit, hint }: StatProps) {
   return (
-    <div className="rounded-2xl border border-line bg-paper px-4 py-3 shadow-sm">
-      <div className="text-xs font-semibold uppercase tracking-wide text-ink-soft">{label}</div>
-      <div className="font-display text-3xl font-bold tabular-nums">{value}</div>
-      {hint && <div className="text-[11px] text-ink-soft">{hint}</div>}
+    <div className="border-l border-line px-4 py-4">
+      <p className="eyebrow">{label}</p>
+      <p className="mt-1 font-display text-3xl font-semibold leading-none">
+        <CountUp value={value} />
+        {unit && <span className="text-lg"> {unit}</span>}
+      </p>
+      {hint && <p className="mt-1 text-[11px] text-ink-soft">{hint}</p>}
     </div>
   );
 }
 
 export function ImpactStrip({ impact }: { impact: ImpactTotals }) {
   return (
-    <section aria-label="Impact tonight" className="grid grid-cols-2 gap-3 md:grid-cols-[1.4fr_repeat(4,minmax(0,1fr))]">
-      <div className="col-span-2 rounded-2xl bg-leaf px-5 py-3 text-paper shadow-sm md:col-span-1">
-        <div className="text-xs font-semibold uppercase tracking-widest text-paper/80">Food rescued tonight</div>
-        <div className="font-display text-4xl font-black tabular-nums">
-          {impact.rescuedLbs} <span className="text-2xl font-bold">lbs</span>
-        </div>
+    <section aria-label="Tonight so far" className="grid grid-cols-2 border-b-[1.5px] border-ink md:grid-cols-[1.35fr_repeat(4,minmax(0,1fr))]">
+      <div className="col-span-2 bg-sage-deep px-5 py-4 text-paper md:col-span-1">
+        <p className="eyebrow !text-paper/80">Food that found a table</p>
+        <p className="mt-1 font-display text-5xl font-semibold leading-none">
+          <CountUp value={impact.rescuedLbs} /> <span className="text-2xl">lbs</span>
+        </p>
       </div>
-      <Stat label="Meals provided" value={impact.meals} hint={`Estimate: ${LBS_PER_MEAL} lbs = 1 meal`} />
-      <Stat label="Deliveries" value={impact.deliveries} />
-      <Stat label="On the road now" value={`${impact.inTransitLbs} lbs`} />
-      <Stat label="Couldn't place in time" value={`${impact.expiredLbs} lbs`} hint="We count misses too" />
+      <Stat label="Meals shared" value={impact.meals} hint={`About ${LBS_PER_MEAL} lbs of food is one meal`} />
+      <Stat label="Trips made" value={impact.deliveries} />
+      <Stat label="On the road" value={impact.inTransitLbs} unit="lbs" />
+      <Stat label="Didn't make it in time" value={impact.expiredLbs} unit="lbs" hint="We count these too" />
     </section>
   );
 }

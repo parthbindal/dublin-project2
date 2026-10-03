@@ -38,14 +38,18 @@ const CSV_HEADER = [
   'Date',
   'Donor',
   'Food recovery organization',
-  'Organization city',
+  'Organization address',
   'Food types',
   'Pounds recovered',
   'Picked up',
   'Delivered',
 ];
 
-/** SB 1383 asks generators to record who received their food, what types, and pounds recovered. */
+/**
+ * California's SB 1383 asks large food businesses to keep records of each food recovery partner
+ * (name, address, contact), the types of food, how often it is collected, and pounds recovered per month.
+ * This log covers the per-donation part: who received it, where, what types, and how many pounds.
+ */
 export function toComplianceCsv(listings: Listing[], donors: Donor[], recipients: Recipient[], dateLabel: string): string {
   const rows = listings
     .filter((l) => l.status === 'delivered' && l.match)
@@ -56,7 +60,7 @@ export function toComplianceCsv(listings: Listing[], donors: Donor[], recipients
         dateLabel,
         donors.find((d) => d.id === l.donorId)?.name ?? l.donorId,
         recipient?.name ?? '',
-        recipient?.city ?? '',
+        recipient ? [recipient.street, recipient.city].filter(Boolean).join(', ') : '',
         [...new Set(l.draft.items.map((i) => i.category))].join('; '),
         l.totalLbs,
         l.pickedUpAt === null ? '' : formatClock(l.pickedUpAt),

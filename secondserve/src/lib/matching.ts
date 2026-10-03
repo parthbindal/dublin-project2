@@ -6,7 +6,9 @@ import type { CandidateResult, Donor, Driver, Listing, Match, Recipient } from '
 
 export const PICKUP_BUFFER_MIN = 15; // time to reach the donor before a driver is chosen
 export const LOADING_MIN = 5;
-export const COLD_CHAIN_MAX_MIN = 30; // longer perishable trips need a cooler
+// Our own safety rule: perishable trips over 30 minutes need a cooler. That keeps us far inside the
+// USDA guidance to never leave food out of refrigeration for more than 2 hours (1 hour above 90°F).
+export const COLD_CHAIN_MAX_MIN = 30;
 const MAX_USEFUL_KM = 25;
 const ALL_NIGHT_MIN = 24 * 60 - 1;
 const WEIGHTS = { distance: 35, capacity: 25, need: 25, time: 15 } as const;
@@ -119,7 +121,7 @@ export function chooseDriver(
   const note = needsCooler
     ? `${who} has a cooler for the ${legMin}-minute drive`
     : isPerishable(listing)
-      ? `${who} can deliver it in ${legMin} minutes, short enough to stay food-safe`
+      ? `${who} can deliver it in ${legMin} minutes, well inside the USDA's 2-hour limit for food out of temperature control`
       : `${who} can get there first`;
   return { ...best, note };
 }

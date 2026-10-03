@@ -117,7 +117,7 @@ describe('chooseDriver', () => {
 
   it('allows a short perishable trip without a cooler', () => {
     const plan = chooseDriver(makeListing({ storage: 'refrigerated' }), donor, makeRecipient(), [makeDriver()], NOW);
-    expect(plan?.note).toContain('food-safe');
+    expect(plan?.note).toContain("USDA's 2-hour limit");
   });
 
   it('skips busy drivers and drivers without enough room', () => {

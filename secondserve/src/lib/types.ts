@@ -84,6 +84,7 @@ export interface Donor {
   name: string;
   kind: DonorKind;
   city: string;
+  street?: string;
   location: LatLng;
 }
 
@@ -91,6 +92,7 @@ export interface Recipient {
   id: string;
   name: string;
   city: string;
+  street?: string;
   location: LatLng;
   hasFridge: boolean;
   acceptsHot: boolean;
@@ -135,6 +137,7 @@ export interface FeedEvent {
 export interface AppState {
   now: number;
   weekday: number;
+  areaName: string;
   donors: Donor[];
   recipients: Recipient[];
   drivers: Driver[];
