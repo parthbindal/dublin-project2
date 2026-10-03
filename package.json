@@ -1,0 +1,12 @@
+{
+  "name": "binsight",
+  "version": "1.0.0",
+  "description": "Point your camera at trash and Binsight tells you which bin it goes in. Built at Dublin HacX 2026.",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "test": "node --test \"tests/*.test.js\"",
+    "start": "python -m http.server 8080"
+  },
+  "license": "MIT"
+}

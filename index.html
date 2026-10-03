@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Binsight</title>
+    <meta name="description" content="Point your camera at trash and Binsight tells you which bin it goes in." />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>♻️</text></svg>"
+    />
+    <link rel="stylesheet" href="src/styles.css" />
+  </head>
+  <body>
+    <header class="top">
+      <h1>Binsight</h1>
+      <p class="tagline">Point your camera at trash. Find out which bin it goes in.</p>
+    </header>
+
+    <main>
+      <section id="stage" class="stage" aria-label="Camera view">
+        <video id="video" playsinline muted hidden></video>
+        <img id="photo" alt="The photo you uploaded" hidden />
+        <canvas id="overlay" aria-hidden="true"></canvas>
+        <div id="stage-empty" class="stage-empty">
+          <p>Start the camera or upload a photo of one item.</p>
+        </div>
+        <p id="stage-banner" class="stage-banner" hidden></p>
+      </section>
+
+      <p id="status" class="status" role="status">Loading the AI model…</p>
+      <script>
+        // Browsers block the app's modules on file:// pages, so explain instead of hanging on "Loading".
+        if (window.location.protocol === 'file:') {
+          document.getElementById('status').textContent =
+            'Open Binsight through a local web server (see the README), not by double-clicking the file.';
+        }
+      </script>
+
+      <div class="controls">
+        <button id="btn-camera" class="primary" type="button" disabled>Start camera</button>
+        <button id="btn-flip" type="button" hidden>Flip camera</button>
+        <button id="btn-upload" type="button" disabled>Upload photo</button>
+        <input id="file-input" type="file" accept="image/*" hidden />
+        <button id="btn-voice" type="button" aria-pressed="true">Voice: on</button>
+      </div>
+
+      <section id="result" class="result" aria-live="polite" hidden>
+        <p class="result-bin"><span id="result-icon" aria-hidden="true"></span> <span id="result-bin"></span></p>
+        <p id="result-item" class="result-item"></p>
+        <p id="result-reason"></p>
+        <p id="result-tip" class="result-tip"></p>
+        <button id="btn-sorted" class="primary" type="button">I sorted it ✓</button>
+      </section>
+
+      <section class="impact" aria-labelledby="impact-heading">
+        <h2 id="impact-heading">Your impact</h2>
+        <p class="impact-total"><span id="total">0</span> <span id="total-label">items</span> sorted</p>
+        <ul id="tally" class="tally"></ul>
+      </section>
+
+      <section class="how" aria-labelledby="how-heading">
+        <h2 id="how-heading">How it works</h2>
+        <ol>
+          <li>An AI model running inside your browser spots objects in the camera feed.</li>
+          <li>Binsight matches each object to California sorting rules.</li>
+          <li>You get the bin, the reason and a tip, read out loud if voice is on.</li>
+        </ol>
+      </section>
+    </main>
+
+    <footer>
+      <p>Everything runs on your device. Your camera feed and photos never leave it.</p>
+      <p>Guidance follows general California rules. Your city may differ, so check your waste hauler's guide.</p>
+      <p>Built at Dublin HacX 2026.</p>
+    </footer>
+
+    <script defer src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@2.2.3/dist/coco-ssd.min.js"></script>
+    <script type="module" src="src/app.js"></script>
+  </body>
+</html>
