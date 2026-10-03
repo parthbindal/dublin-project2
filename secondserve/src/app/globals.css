@@ -1,0 +1,110 @@
+@import "tailwindcss";
+
+/* Warm "farmers market meets control room" palette. */
+:root {
+  --cream: #f5efe3;
+  --paper: #fffcf6;
+  --ink: #14261f;
+  --ink-soft: #52615a;
+  --line: #e2d9c6;
+  --tomato: #d9502a;
+  --leaf: #2d8a4e;
+  --mustard: #e3a21a;
+  --sky: #2f6fd1;
+  --plum: #7b3fa0;
+}
+
+@theme inline {
+  --color-cream: var(--cream);
+  --color-paper: var(--paper);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-line: var(--line);
+  --color-tomato: var(--tomato);
+  --color-leaf: var(--leaf);
+  --color-mustard: var(--mustard);
+  --color-sky: var(--sky);
+  --color-plum: var(--plum);
+  --font-sans: var(--font-geist);
+  --font-display: var(--font-fraunces);
+}
+
+body {
+  background:
+    radial-gradient(1100px 520px at 8% -12%, #fbe3cc 0%, transparent 60%),
+    radial-gradient(900px 480px at 100% 0%, #e7efd9 0%, transparent 55%),
+    var(--cream);
+  color: var(--ink);
+  font-family: var(--font-geist), system-ui, sans-serif;
+}
+
+:focus-visible {
+  outline: 3px solid var(--sky);
+  outline-offset: 2px;
+}
+
+/* ---------- Map pins (Leaflet divIcons) ---------- */
+.pin-wrap {
+  background: none;
+  border: none;
+}
+
+.pin {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 2px solid #fff;
+  border-radius: 9999px;
+  box-shadow: 0 3px 8px rgb(20 38 31 / 0.35);
+  font-size: 17px;
+  line-height: 1;
+}
+
+.pin-donor {
+  background: var(--tomato);
+}
+
+.pin-recipient {
+  background: var(--leaf);
+}
+
+.pin-driver {
+  width: 30px;
+  height: 30px;
+  background: var(--mustard);
+  font-size: 15px;
+}
+
+.pin-pulse::after {
+  content: "";
+  position: absolute;
+  inset: -7px;
+  border: 3px solid var(--tomato);
+  border-radius: 9999px;
+  animation: pin-pulse 1.6s ease-out infinite;
+}
+
+@keyframes pin-pulse {
+  from {
+    transform: scale(0.7);
+    opacity: 0.9;
+  }
+  to {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pin-pulse::after {
+    animation: none;
+    opacity: 0.6;
+  }
+}
+
+.leaflet-container {
+  background: #ece6d8;
+  font-family: inherit;
+}
