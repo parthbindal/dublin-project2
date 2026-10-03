@@ -3,7 +3,7 @@
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { useEffect, useMemo, useState } from 'react';
-import { MapContainer, Marker, Polyline, TileLayer, Tooltip, useMap } from 'react-leaflet';
+import { MapContainer, Marker, Polyline, TileLayer, Tooltip, useMap, ZoomControl } from 'react-leaflet';
 import { interpolateAlong } from '@/lib/geo';
 import { LOADING_MIN } from '@/lib/matching';
 import { fetchRoadPath } from '@/lib/places';
@@ -15,12 +15,19 @@ type Tuple = [number, number];
 
 const TILE_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
 const TILE_ATTRIBUTION = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors · Routes: OSRM';
-const FIT_PADDING: Tuple = [40, 40];
+const FIT_PADDING: Tuple = [70, 70];
 const ACTIVE = new Set<Listing['status']>(['matched', 'picked-up']);
+
+// Literal colors (not CSS variables) because Leaflet writes them into SVG attributes. They match globals.css.
+const ROUTE_COLOR = {
+  toPickup: 'oklch(0.92 0.16 100)',
+  delivering: 'oklch(0.84 0.13 212)',
+  delivered: 'oklch(0.86 0.16 162)',
+  light: 'oklch(0.99 0.02 212)',
+};
 
 const toTuple = (point: LatLng): Tuple => [point.lat, point.lng];
 const vehicleIcon = (driver: Driver): IconName => (driver.vehicle.includes('van') ? 'van' : 'car');
-const ROUTE_COLOR = { toPickup: 'oklch(0.66 0.12 72)', delivering: 'oklch(0.52 0.07 250)', delivered: 'oklch(0.47 0.07 148)' };
 
 const iconCache = new Map<string, L.DivIcon>();
 function pinIcon(kind: PinKind, symbol: IconName, options: { isPulsing?: boolean; isMoving?: boolean } = {}): L.DivIcon {
@@ -28,7 +35,7 @@ function pinIcon(kind: PinKind, symbol: IconName, options: { isPulsing?: boolean
   const key = `${kind}|${symbol}|${isPulsing}|${isMoving}`;
   const cached = iconCache.get(key);
   if (cached) return cached;
-  const size = kind === 'driver' ? 28 : 32;
+  const size = kind === 'driver' ? 22 : 26;
   const icon = L.divIcon({
     className: isMoving ? 'pin-wrap pin-wrap-moving' : 'pin-wrap',
     html: `<div class="pin pin-${kind}${isPulsing ? ' pin-pulse' : ''}">${iconMarkup(symbol)}</div>`,
@@ -84,26 +91,31 @@ type RouteProps = {
   isSelected: boolean;
 };
 
+/** A route is three layers: a wide soft glow, the line itself, and (while food is moving) light flowing along it. */
 function ActiveRoute({ listing, match, donor, recipient, driver, now, isSelected }: RouteProps) {
   const toDonor = useRoadPath(match.driverFrom, donor.location);
   const toRecipient = useRoadPath(donor.location, recipient.location);
   const isDelivered = listing.status === 'delivered';
-  const weight = isSelected ? 7 : 4;
+  const weight = isSelected ? 6 : 4;
+  const color = isDelivered ? ROUTE_COLOR.delivered : ROUTE_COLOR.delivering;
   const status = listing.status === 'matched' ? 'driving to pick up' : 'delivering';
+  const dropOff = toRecipient.map(toTuple);
   return (
     <>
       {listing.status === 'matched' && (
-        <Polyline positions={toDonor.map(toTuple)} pathOptions={{ color: ROUTE_COLOR.toPickup, weight, opacity: 0.95, dashArray: '2 10', lineCap: 'round' }} />
+        <Polyline
+          positions={toDonor.map(toTuple)}
+          pathOptions={{ color: ROUTE_COLOR.toPickup, weight, opacity: 0.95, dashArray: '1 11', lineCap: 'round', className: 'route-dots', interactive: false }}
+        />
       )}
-      <Polyline
-        positions={toRecipient.map(toTuple)}
-        pathOptions={{
-          color: isDelivered ? ROUTE_COLOR.delivered : ROUTE_COLOR.delivering,
-          weight,
-          opacity: isDelivered ? 0.55 : 0.9,
-          className: 'route-draw',
-        }}
-      />
+      <Polyline positions={dropOff} pathOptions={{ color, weight: weight * 3.5, opacity: isDelivered ? 0.07 : 0.2, lineCap: 'round', lineJoin: 'round', interactive: false }} />
+      <Polyline positions={dropOff} pathOptions={{ color, weight, opacity: isDelivered ? 0.5 : 0.95, lineCap: 'round', lineJoin: 'round', className: 'route-draw' }} />
+      {!isDelivered && (
+        <Polyline
+          positions={dropOff}
+          pathOptions={{ color: ROUTE_COLOR.light, weight: weight - 1, opacity: 0.9, dashArray: '2 18', lineCap: 'round', className: 'route-flow', interactive: false }}
+        />
+      )}
       {!isDelivered && (
         <Marker
           position={toTuple(driverPosition(match, now, toDonor, toRecipient))}
@@ -111,7 +123,7 @@ function ActiveRoute({ listing, match, donor, recipient, driver, now, isSelected
           zIndexOffset={1000}
         >
           <Tooltip direction="top" offset={[0, -14]}>
-            {driver.name} ({driver.vehicle}) is {status}
+            <strong>{driver.name}</strong> ({driver.vehicle}) is {status}
           </Tooltip>
         </Marker>
       )}
@@ -163,8 +175,9 @@ export default function MapView({ state, selectedId, onSelect }: Props) {
 
   return (
     // Scroll-wheel zoom is off so scrolling the page never gets trapped by the map. Use + and -, pinch, or double-click.
-    <MapContainer bounds={bounds} boundsOptions={{ padding: FIT_PADDING }} scrollWheelZoom={false} className="h-full w-full">
+    <MapContainer bounds={bounds} boundsOptions={{ padding: FIT_PADDING }} scrollWheelZoom={false} zoomControl={false} className="h-full w-full">
       <TileLayer url={TILE_URL} attribution={TILE_ATTRIBUTION} />
+      <ZoomControl position="bottomright" />
       <KeepInView bounds={bounds} />
       {routes.map((listing) => (
         <RouteFor key={listing.id} listing={listing} state={state} isSelected={listing.id === selectedId} />
@@ -203,7 +216,7 @@ export default function MapView({ state, selectedId, onSelect }: Props) {
         .map((driver) => (
           <Marker key={driver.id} position={toTuple(driver.location)} icon={pinIcon('driver', vehicleIcon(driver))}>
             <Tooltip direction="top" offset={[0, -14]}>
-              {driver.name} ({driver.vehicle}) is free to drive
+              <strong>{driver.name}</strong> ({driver.vehicle}) is free to drive
             </Tooltip>
           </Marker>
         ))}

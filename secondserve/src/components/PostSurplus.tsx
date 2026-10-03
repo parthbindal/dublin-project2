@@ -54,17 +54,17 @@ function DraftEditor({ result, now, onChange }: EditorProps) {
   const setLbs = (index: number, lbs: number) =>
     onChange({ items: draft.items.map((item, i) => (i === index ? { ...item, estimatedLbs: lbs } : item)) });
   return (
-    <div className="animate-sheet-in mt-5 rounded-[10px] border border-line bg-linen/60 p-4">
+    <div className="animate-sheet-in mt-5 rounded-[18px] bg-white/[0.03] p-4 ring-1 ring-inset ring-line">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h3 className="font-semibold">Check the details</h3>
         <SourceBadge source={result.source} />
       </div>
-      {result.note && <p className="mt-1 text-xs text-ink-soft">{result.note}</p>}
-      <ul className="mt-3 divide-y divide-line rounded-[10px] border border-line bg-paper text-sm">
+      {result.note && <p className="mt-1 text-xs text-muted">{result.note}</p>}
+      <ul className="mt-3 divide-y divide-line overflow-hidden rounded-[14px] bg-white/[0.03] text-sm ring-1 ring-inset ring-line">
         {draft.items.map((item, index) => (
           <li key={`${item.name}-${index}`} className="flex items-center justify-between gap-3 px-3 py-2">
             <span>
-              {describeItem(item)} <span className="text-ink-soft">· {CATEGORY_LABEL[item.category]}</span>
+              {describeItem(item)} <span className="text-muted">· {CATEGORY_LABEL[item.category]}</span>
             </span>
             <span className="shrink-0">
               <input
@@ -115,16 +115,16 @@ function DraftEditor({ result, now, onChange }: EditorProps) {
             className={FIELD}
           />
           {pickupMin !== null && pickupMin <= now && (
-            <span className="mt-1 block text-xs font-semibold text-tomato">That time has already passed (it&apos;s {formatClock(now)}).</span>
+            <span className="mt-1 block text-xs font-semibold text-red">That time has already passed (it&apos;s {formatClock(now)}).</span>
           )}
-          {pickupMin === null && <span className="mt-1 block text-xs font-normal text-ink-soft">No time given, so we&apos;ll allow 2 hours.</span>}
+          {pickupMin === null && <span className="mt-1 block text-xs font-normal text-muted">No time given, so we&apos;ll allow 2 hours.</span>}
         </label>
       </div>
       <div className="mt-3 flex flex-wrap gap-1.5">
         <DietaryTags dietary={draft.dietary} />
       </div>
-      <p className="mt-2 text-xs text-ink-soft">Allergens are spotted automatically from your description. Please double-check them.</p>
-      {draft.notes && <p className="mt-2 text-sm text-ink-soft">“{draft.notes}”</p>}
+      <p className="mt-2 text-xs text-muted">Allergens are spotted automatically from your description. Please double-check them.</p>
+      {draft.notes && <p className="mt-2 text-sm text-muted">“{draft.notes}”</p>}
     </div>
   );
 }
@@ -208,7 +208,7 @@ function NewBusinessFields({ value, near, onChange }: NewBusinessProps) {
   }
 
   return (
-    <div className="animate-sheet-in mt-3 grid gap-3 rounded-[16px] border border-line bg-linen/70 p-4 sm:grid-cols-2">
+    <div className="animate-sheet-in mt-3 grid gap-3 rounded-[18px] bg-white/[0.03] p-4 ring-1 ring-inset ring-line sm:grid-cols-2">
       <label className="text-sm font-semibold">
         Business name
         <input
@@ -255,7 +255,7 @@ function NewBusinessFields({ value, near, onChange }: NewBusinessProps) {
             placeholder="Street address, like 123 Main St, Dublin, CA"
             className="field min-w-0 flex-1 px-3 py-2"
           />
-          <button type="button" onClick={handleFind} disabled={isFinding} className="btn btn-ink shrink-0">
+          <button type="button" onClick={handleFind} disabled={isFinding} className="btn btn-light shrink-0">
             {isFinding ? 'Finding…' : 'Find it'}
           </button>
         </div>
@@ -263,13 +263,13 @@ function NewBusinessFields({ value, near, onChange }: NewBusinessProps) {
           type="button"
           onClick={handleUseHere}
           disabled={isFinding}
-          className="mt-2 inline-flex items-center gap-1.5 text-sm font-semibold text-dusk underline-offset-4 hover:underline disabled:opacity-60"
+          className="mt-2 inline-flex items-center gap-1.5 text-sm font-semibold text-cyan underline-offset-4 hover:underline disabled:opacity-60"
         >
           <Icon name="locate" className="h-4 w-4" />
           Use where I am now
         </button>
         {status && (
-          <p role="status" className={`mt-2 text-sm ${status.isError ? 'font-semibold text-tomato' : 'text-sage-deep'}`}>
+          <p role="status" className={`mt-2 text-sm ${status.isError ? 'font-semibold text-red' : 'text-mint'}`}>
             {status.text}
           </p>
         )}
@@ -366,7 +366,7 @@ export function PostSurplus({ donors, now, onClose, onPost }: Props) {
 
   return (
     <div
-      className="animate-fade-in fixed inset-0 z-[2000] grid place-items-center bg-ink/45 p-4"
+      className="animate-fade-in fixed inset-0 z-[2000] grid place-items-center bg-bg/70 p-4 backdrop-blur-md"
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) onClose();
       }}
@@ -375,16 +375,16 @@ export function PostSurplus({ donors, now, onClose, onPost }: Props) {
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
-        className="animate-sheet-in max-h-[92vh] w-full max-w-2xl overflow-y-auto rounded-[16px] border-[1.5px] border-ink bg-paper p-6"
+        className="card animate-sheet-in max-h-[92vh] w-full max-w-2xl overflow-y-auto !rounded-[26px] p-6 shadow-[0_40px_120px_-30px_oklch(0.73_0.17_295/0.45)]"
       >
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h2 id={titleId} className="font-display text-2xl font-bold">
+            <h2 id={titleId} className="text-2xl font-semibold tracking-[-0.03em]">
               Share extra food
             </h2>
-            <p className="text-sm text-ink-soft">Tell us what&apos;s left, the way you&apos;d text a friend. We&apos;ll turn it into a post a food bank can act on.</p>
+            <p className="text-sm text-muted">Tell us what&apos;s left, the way you&apos;d text a friend. We&apos;ll turn it into a post a food bank can act on.</p>
           </div>
-          <button type="button" onClick={onClose} aria-label="Close" className="rounded-full px-2 text-2xl leading-none text-ink-soft hover:text-ink">
+          <button type="button" onClick={onClose} aria-label="Close" className="rounded-full px-2 text-2xl leading-none text-muted hover:text-fg">
             ×
           </button>
         </div>
@@ -403,7 +403,7 @@ export function PostSurplus({ donors, now, onClose, onPost }: Props) {
           <button
             type="button"
             onClick={() => setDonorId(NEW_BUSINESS)}
-            className="mt-1.5 text-sm font-semibold text-dusk underline-offset-4 hover:underline"
+            className="mt-1.5 text-sm font-semibold text-cyan underline-offset-4 hover:underline"
           >
             Not on the list? Add your business
           </button>
@@ -427,7 +427,7 @@ export function PostSurplus({ donors, now, onClose, onPost }: Props) {
               key={example.label}
               type="button"
               onClick={() => handleTextChange(example.text)}
-              className="rounded-full bg-cream px-3 py-1 font-medium text-ink-soft ring-1 ring-line transition hover:text-ink"
+              className="rounded-full bg-white/[0.04] px-3 py-1 font-medium text-muted ring-1 ring-line-strong transition hover:bg-white/10 hover:text-fg"
             >
               Try: {example.label}
             </button>
@@ -437,28 +437,31 @@ export function PostSurplus({ donors, now, onClose, onPost }: Props) {
           type="button"
           onClick={handleOrganize}
           disabled={isLoading}
-          className="btn btn-ink mt-4"
+          className="btn btn-ai mt-4"
         >
           {isLoading ? (
             <span className="inline-flex items-center gap-2">
-              <span aria-hidden className="h-4 w-4 animate-spin rounded-full border-2 border-paper/40 border-t-paper" />
+              <span aria-hidden className="h-4 w-4 animate-spin rounded-full border-2 border-bg/30 border-t-bg" />
               Organizing…
             </span>
           ) : (
-            'Read it for me'
+            <>
+              <Icon name="sparkle" className="h-4 w-4" />
+              Read it for me
+            </>
           )}
         </button>
         {error && (
-          <p role="alert" className="mt-2 text-sm font-semibold text-tomato">
+          <p role="alert" className="mt-2 text-sm font-semibold text-red">
             {error}
           </p>
         )}
         {result && <DraftEditor result={result} now={now} onChange={updateDraft} />}
         <div className="mt-6 flex flex-wrap items-center justify-end gap-2 border-t border-line pt-4">
           {isNewBusiness && !isBusinessReady && (
-            <p className="mr-auto text-xs text-ink-soft">Add your business name and find its address to share.</p>
+            <p className="mr-auto text-xs text-muted">Add your business name and find its address to share.</p>
           )}
-          <button type="button" onClick={onClose} className="btn btn-quiet">
+          <button type="button" onClick={onClose} className="btn btn-glass">
             Cancel
           </button>
           <button

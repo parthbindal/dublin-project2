@@ -24,6 +24,10 @@ const ICON_PATHS = {
   locate: 'M12 21s6.5-5.6 6.5-11a6.5 6.5 0 0 0-13 0c0 5.4 6.5 11 6.5 11z M12 12.3a2.3 2.3 0 1 0 0-4.6 2.3 2.3 0 0 0 0 4.6z',
   plus: 'M12 5v14 M5 12h14',
   restart: 'M4.5 12a7.5 7.5 0 1 0 2.2-5.3 M4.5 4.5v3.7h3.7',
+  sparkle: 'M12 3.5l1.9 5.1 5.1 1.9-5.1 1.9L12 17.5l-1.9-5.1L5 10.5l5.1-1.9z M18.5 15.5l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z',
+  search: 'M10.5 17a6.5 6.5 0 1 0 0-13 6.5 6.5 0 0 0 0 13z M15.5 15.5L20 20',
+  arrow: 'M5 12h14 M13.5 6.5L19 12l-5.5 5.5',
+  pin: 'M12 21s6.5-5.6 6.5-11a6.5 6.5 0 0 0-13 0c0 5.4 6.5 11 6.5 11z',
 } as const;
 
 export type IconName = keyof typeof ICON_PATHS;
@@ -66,26 +70,27 @@ export const STORAGE_LABEL: Record<Storage, string> = {
 };
 
 const STATUS_STYLE: Record<ListingStatus, { label: string; className: string }> = {
-  open: { label: 'Looking for a home', className: 'bg-terracotta/12 text-terracotta-deep' },
-  matched: { label: 'Driver on the way', className: 'bg-dusk/12 text-dusk' },
-  'picked-up': { label: 'In the van', className: 'bg-honey/35 text-ink' },
-  delivered: { label: 'Delivered', className: 'bg-sage/20 text-sage-deep' },
-  expired: { label: "Didn't make it", className: 'bg-ink/8 text-ink-soft' },
+  open: { label: 'Looking for a home', className: 'bg-orange/12 text-orange ring-orange/30' },
+  matched: { label: 'Driver on the way', className: 'bg-yellow/12 text-yellow ring-yellow/30' },
+  'picked-up': { label: 'In the van', className: 'bg-cyan/12 text-cyan ring-cyan/30' },
+  delivered: { label: 'Delivered', className: 'bg-mint/12 text-mint ring-mint/30' },
+  expired: { label: "Didn't make it", className: 'bg-white/5 text-muted ring-line-strong' },
 };
 
-const SOURCE_STYLE: Record<DraftSource, { label: string; className: string }> = {
-  ai: { label: 'Read by AI', className: 'bg-plum/10 text-plum' },
-  builtin: { label: 'Read without AI', className: 'bg-ink/6 text-ink-soft' },
-  sample: { label: 'Demo post', className: 'bg-ink/6 text-ink-soft' },
+const SOURCE_STYLE: Record<DraftSource, { label: string; className: string; isAi: boolean }> = {
+  ai: { label: 'Read by AI', className: 'bg-violet/12 text-violet ring-violet/35', isAi: true },
+  builtin: { label: 'Read without AI', className: 'bg-white/5 text-muted ring-line-strong', isAi: false },
+  sample: { label: 'Demo post', className: 'bg-white/5 text-muted ring-line-strong', isAi: false },
 };
 
-const CHIP = 'inline-flex items-center whitespace-nowrap rounded-full px-2.5 py-0.5 text-xs font-semibold';
+const CHIP = 'inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-0.5 text-xs font-semibold ring-1 ring-inset';
 
 /** The `key` replays a quick fade whenever the status changes. */
 export function StatusChip({ status }: { status: ListingStatus }) {
   const style = STATUS_STYLE[status];
   return (
     <span key={status} className={`${CHIP} animate-chip-in ${style.className}`}>
+      <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-current shadow-[0_0_8px_currentColor]" />
       {style.label}
     </span>
   );
@@ -93,12 +98,17 @@ export function StatusChip({ status }: { status: ListingStatus }) {
 
 export function SourceBadge({ source }: { source: DraftSource }) {
   const style = SOURCE_STYLE[source];
-  return <span className={`${CHIP} ${style.className}`}>{style.label}</span>;
+  return (
+    <span className={`${CHIP} ${style.className}`}>
+      {style.isAi && <Icon name="sparkle" className="h-3 w-3" />}
+      {style.label}
+    </span>
+  );
 }
 
 export function Tag({ children, isWarning = false }: { children: ReactNode; isWarning?: boolean }) {
-  const tone = isWarning ? 'bg-terracotta/10 text-terracotta-deep' : 'bg-linen text-ink-soft';
-  return <span className={`inline-flex rounded-[10px] px-2 py-0.5 text-xs font-medium ${tone}`}>{children}</span>;
+  const tone = isWarning ? 'bg-red/10 text-red ring-red/30' : 'bg-white/[0.04] text-muted ring-line';
+  return <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ring-1 ring-inset ${tone}`}>{children}</span>;
 }
 
 export function dietLabel(dietary: Dietary): string {
@@ -156,8 +166,9 @@ export function MotionToggle() {
       onClick={handleToggle}
       aria-pressed={!isCalm}
       title="Calm motion turns off animations, for anyone who prefers less movement on screen."
-      className="btn btn-quiet !py-1.5 text-sm"
+      className="btn btn-glass !px-3 !py-1.5 text-xs"
     >
+      <span aria-hidden className={`h-1.5 w-1.5 rounded-full ${isCalm ? 'bg-faint' : 'bg-mint shadow-[0_0_8px_var(--mint)]'}`} />
       Motion: {isCalm ? 'calm' : 'full'}
     </button>
   );

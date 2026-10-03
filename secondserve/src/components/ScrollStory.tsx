@@ -44,20 +44,66 @@ const CAPTIONS = [
 
 const FIELDS = ['30 lbs', 'Room temperature', 'Vegan', 'Allergen: gluten', 'Pick up by 7:00 PM'];
 
+// Night-market palette for the illustration (fixed, so the scene looks the same everywhere).
+const BUILDING = 'oklch(0.23 0.03 280)';
+const BUILDING_EDGE = 'oklch(0.32 0.04 280)';
+const LOAF = 'oklch(0.78 0.14 68)';
+const LOAF_EDGE = 'oklch(0.5 0.1 55)';
+const WARM_LIGHT = 'oklch(0.88 0.13 85)';
+const DOOR = 'oklch(0.18 0.03 280)';
+const SIGN = 'oklch(0.15 0.03 280)';
+
+function Defs() {
+  return (
+    <defs>
+      <linearGradient id="story-sky" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stopColor="oklch(0.17 0.05 285)" />
+        <stop offset="0.55" stopColor="oklch(0.3 0.12 330)" />
+        <stop offset="1" stopColor="oklch(0.62 0.17 40)" />
+      </linearGradient>
+      <linearGradient id="story-route" x1="214" y1="0" x2="1000" y2="0" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stopColor="var(--orange)" />
+        <stop offset="0.5" stopColor="var(--cyan)" />
+        <stop offset="1" stopColor="var(--mint)" />
+      </linearGradient>
+      <linearGradient id="story-awning" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stopColor="var(--orange)" />
+        <stop offset="1" stopColor="var(--pink)" />
+      </linearGradient>
+      <linearGradient id="story-beam" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stopColor={WARM_LIGHT} stopOpacity="0.55" />
+        <stop offset="1" stopColor={WARM_LIGHT} stopOpacity="0" />
+      </linearGradient>
+      <radialGradient id="story-sun" cx="0.5" cy="0.5" r="0.5">
+        <stop offset="0" stopColor="oklch(0.9 0.13 75)" />
+        <stop offset="0.6" stopColor="oklch(0.78 0.17 45)" />
+        <stop offset="1" stopColor="oklch(0.7 0.2 20)" stopOpacity="0" />
+      </radialGradient>
+      <filter id="story-glow" x="-30%" y="-30%" width="160%" height="160%">
+        <feGaussianBlur stdDeviation="5" result="blur" />
+        <feMerge>
+          <feMergeNode in="blur" />
+          <feMergeNode in="SourceGraphic" />
+        </feMerge>
+      </filter>
+    </defs>
+  );
+}
+
 function Bakery() {
   return (
     <g transform="translate(70 262)">
-      <rect x="0" y="40" width="200" height="150" rx="3" fill="var(--paper)" stroke="var(--ink)" strokeWidth="3" />
-      <path d="M-10 40 H210 L198 76 H2 Z" fill="var(--terracotta)" stroke="var(--ink)" strokeWidth="3" strokeLinejoin="round" />
+      <rect x="0" y="40" width="200" height="150" rx="6" fill={BUILDING} stroke={BUILDING_EDGE} strokeWidth="2" />
+      <path d="M-10 40 H210 L198 76 H2 Z" fill="url(#story-awning)" />
       {[22, 66, 110, 154].map((x) => (
-        <path key={x} d={`M${x} 42 h22 l-2 32 h-18 z`} fill="var(--paper)" opacity="0.8" />
+        <path key={x} d={`M${x} 42 h22 l-2 32 h-18 z`} fill="oklch(1 0 0 / 0.18)" />
       ))}
-      <rect x="22" y="2" width="156" height="30" rx="2" fill="var(--ink)" />
-      <text x="100" y="22" textAnchor="middle" fill="var(--paper)" fontSize="14" fontWeight="700" letterSpacing="1.5">
+      <rect x="22" y="2" width="156" height="30" rx="8" fill={SIGN} stroke="var(--orange)" strokeWidth="1.5" />
+      <text x="100" y="22" textAnchor="middle" fill="var(--orange)" fontSize="14" fontWeight="700" letterSpacing="2" filter="url(#story-glow)">
         GOLDEN CRUST
       </text>
-      <rect x="18" y="94" width="98" height="70" fill="oklch(0.95 0.07 92)" stroke="var(--ink)" strokeWidth="3" />
-      <g className="story-loaves-out" stroke="var(--ink)" strokeWidth="2" fill="oklch(0.77 0.14 70)">
+      <rect x="18" y="94" width="98" height="70" rx="4" fill={WARM_LIGHT} opacity="0.9" filter="url(#story-glow)" />
+      <g className="story-loaves-out" fill={LOAF} stroke={LOAF_EDGE} strokeWidth="1.5">
         {[
           [44, 150],
           [72, 150],
@@ -68,8 +114,8 @@ function Bakery() {
           <ellipse key={`${cx}-${cy}`} cx={cx} cy={cy} rx="14" ry="8" />
         ))}
       </g>
-      <rect x="136" y="112" width="44" height="78" fill="var(--linen)" stroke="var(--ink)" strokeWidth="3" />
-      <circle cx="170" cy="152" r="3" fill="var(--ink)" />
+      <rect x="136" y="112" width="44" height="78" rx="3" fill={DOOR} stroke={BUILDING_EDGE} strokeWidth="2" />
+      <circle cx="170" cy="152" r="3" fill="var(--orange)" />
     </g>
   );
 }
@@ -77,26 +123,26 @@ function Bakery() {
 function YouthCenter() {
   return (
     <g transform="translate(930 250)">
-      <path d="M-12 72 L100 10 L212 72 Z" fill="var(--sage-deep)" stroke="var(--ink)" strokeWidth="3" strokeLinejoin="round" />
-      <path d="M100 60 c-6-7-17-3-17 5 0 8 17 16 17 16 s17-8 17-16 c0-8-11-12-17-5z" fill="var(--terracotta)" />
-      <rect x="0" y="72" width="200" height="130" fill="var(--paper)" stroke="var(--ink)" strokeWidth="3" />
+      <path d="M-12 72 L100 10 L212 72 Z" fill="oklch(0.3 0.06 165)" stroke="var(--mint)" strokeWidth="2" strokeLinejoin="round" />
+      <path d="M100 60 c-6-7-17-3-17 5 0 8 17 16 17 16 s17-8 17-16 c0-8-11-12-17-5z" fill="var(--pink)" filter="url(#story-glow)" />
+      <rect x="0" y="72" width="200" height="130" rx="4" fill={BUILDING} stroke={BUILDING_EDGE} strokeWidth="2" />
       {[22, 128].map((x) => (
         <g key={x}>
-          <rect x={x} y="94" width="50" height="40" fill="var(--linen)" stroke="var(--ink)" strokeWidth="3" />
-          <rect className="story-window-light" x={x + 1.5} y="95.5" width="47" height="37" fill="var(--honey)" />
+          <rect x={x} y="94" width="50" height="40" rx="3" fill={DOOR} />
+          <rect className="story-window-light" x={x} y="94" width="50" height="40" rx="3" fill={WARM_LIGHT} filter="url(#story-glow)" />
         </g>
       ))}
-      <g className="story-loaves-in" stroke="var(--ink)" strokeWidth="2" fill="oklch(0.77 0.14 70)">
+      <g className="story-loaves-in" fill={LOAF} stroke={LOAF_EDGE} strokeWidth="1.5">
         <ellipse cx="40" cy="124" rx="9" ry="5" />
         <ellipse cx="56" cy="124" rx="9" ry="5" />
         <ellipse cx="146" cy="124" rx="9" ry="5" />
         <ellipse cx="162" cy="124" rx="9" ry="5" />
       </g>
-      <rect x="10" y="150" width="114" height="24" rx="2" fill="var(--ink)" />
-      <text x="67" y="167" textAnchor="middle" fill="var(--paper)" fontSize="11" fontWeight="700" letterSpacing="1">
+      <rect x="10" y="150" width="114" height="24" rx="6" fill={SIGN} stroke="var(--mint)" strokeWidth="1.5" />
+      <text x="67" y="167" textAnchor="middle" fill="var(--mint)" fontSize="11" fontWeight="700" letterSpacing="1.5" filter="url(#story-glow)">
         YOUTH CENTER
       </text>
-      <rect x="132" y="140" width="44" height="62" fill="var(--linen)" stroke="var(--ink)" strokeWidth="3" />
+      <rect x="132" y="140" width="44" height="62" rx="3" fill={DOOR} stroke={BUILDING_EDGE} strokeWidth="2" />
     </g>
   );
 }
@@ -104,27 +150,38 @@ function YouthCenter() {
 function Van() {
   return (
     <g transform="translate(-36 -40)">
-      <path d="M2 10 H48 V40 H2 Z" fill="var(--honey)" stroke="var(--ink)" strokeWidth="3" strokeLinejoin="round" />
-      <path d="M48 18 H62 L72 29 V40 H48 Z" fill="var(--honey)" stroke="var(--ink)" strokeWidth="3" strokeLinejoin="round" />
-      <path d="M52 21 H61 L67 28 H52 Z" fill="var(--paper)" />
-      <path d="M25 22 c-3-3-8-1-8 3 0 4 8 8 8 8 s8-4 8-8 c0-4-5-6-8-3z" fill="var(--terracotta)" />
-      <circle cx="16" cy="42" r="7" fill="var(--ink)" />
-      <circle cx="58" cy="42" r="7" fill="var(--ink)" />
+      <path d="M72 30 L150 14 L150 48 Z" fill="url(#story-beam)" />
+      <path d="M2 10 H48 V40 H2 Z" fill="var(--yellow)" />
+      <path d="M48 18 H62 L72 29 V40 H48 Z" fill="var(--yellow)" />
+      <path d="M52 21 H61 L67 28 H52 Z" fill="oklch(0.25 0.04 280)" />
+      <path d="M25 22 c-3-3-8-1-8 3 0 4 8 8 8 8 s8-4 8-8 c0-4-5-6-8-3z" fill="var(--pink)" />
+      <circle cx="16" cy="42" r="7" fill="oklch(0.14 0.02 280)" stroke="oklch(0.4 0.02 280)" strokeWidth="2" />
+      <circle cx="58" cy="42" r="7" fill="oklch(0.14 0.02 280)" stroke="oklch(0.4 0.02 280)" strokeWidth="2" />
     </g>
   );
 }
 
+const STARS: Array<[number, number, number]> = [
+  [80, 60, 1.6], [190, 120, 1.2], [300, 40, 1.8], [420, 95, 1.1], [520, 30, 1.5], [610, 140, 1.2], [700, 70, 1.9],
+  [790, 30, 1.2], [860, 110, 1.4], [1040, 50, 1.7], [1120, 120, 1.2], [1160, 30, 1.4], [250, 190, 1], [980, 180, 1.1],
+];
+
 function Scenery({ routeRef }: { routeRef: RefObject<SVGPathElement | null> }) {
   return (
     <>
-      <rect width="1200" height="560" fill="var(--sky)" />
-      <rect className="story-dusk" width="1200" height="560" fill="oklch(0.72 0.15 25)" />
-      <circle className="story-sun" cx="930" cy="150" r="58" fill="var(--honey)" />
-      <path d="M0 330 C 180 280, 320 300, 460 320 S 760 270, 900 300 S 1120 290, 1200 300 V 560 H 0 Z" fill="oklch(0.85 0.11 140)" />
-      <path d="M0 410 C 220 380, 420 400, 640 395 S 1000 380, 1200 400 V 560 H 0 Z" fill="oklch(0.93 0.07 110)" />
-      <path d={ROAD} stroke="oklch(0.78 0.015 260)" strokeWidth="30" fill="none" strokeLinecap="round" />
-      <path d={ROAD} stroke="var(--paper)" strokeWidth="2.5" strokeDasharray="14 14" fill="none" />
-      <path ref={routeRef} d={ROAD} stroke="var(--terracotta)" strokeWidth="6" fill="none" strokeLinecap="round" />
+      <rect width="1200" height="560" fill="url(#story-sky)" />
+      <rect className="story-night" width="1200" height="560" fill="oklch(0.12 0.03 280)" />
+      <g className="story-stars" fill="white">
+        {STARS.map(([cx, cy, r]) => (
+          <circle key={`${cx}-${cy}`} cx={cx} cy={cy} r={r} />
+        ))}
+      </g>
+      <circle className="story-sun" cx="930" cy="190" r="90" fill="url(#story-sun)" />
+      <path d="M0 330 C 180 280, 320 300, 460 320 S 760 270, 900 300 S 1120 290, 1200 300 V 560 H 0 Z" fill="oklch(0.2 0.045 290)" />
+      <path d="M0 410 C 220 380, 420 400, 640 395 S 1000 380, 1200 400 V 560 H 0 Z" fill="oklch(0.16 0.03 280)" />
+      <path d={ROAD} stroke="oklch(0.24 0.02 275)" strokeWidth="30" fill="none" strokeLinecap="round" />
+      <path d={ROAD} stroke="oklch(1 0 0 / 0.18)" strokeWidth="2" strokeDasharray="14 14" fill="none" />
+      <path ref={routeRef} d={ROAD} stroke="url(#story-route)" strokeWidth="6" fill="none" strokeLinecap="round" filter="url(#story-glow)" />
       {[
         [330, 372, 22],
         [520, 352, 28],
@@ -132,8 +189,8 @@ function Scenery({ routeRef }: { routeRef: RefObject<SVGPathElement | null> }) {
         [880, 384, 18],
       ].map(([cx, cy, r]) => (
         <g key={cx}>
-          <rect x={cx - 3} y={cy} width="6" height={r + 10} fill="var(--ink-soft)" />
-          <circle cx={cx} cy={cy} r={r} fill="oklch(0.66 0.16 148)" stroke="var(--ink)" strokeWidth="2.5" />
+          <rect x={cx - 3} y={cy} width="6" height={r + 10} fill="oklch(0.22 0.03 280)" />
+          <circle cx={cx} cy={cy} r={r} fill="oklch(0.27 0.06 175)" />
         </g>
       ))}
     </>
@@ -236,22 +293,23 @@ export function ScrollStory() {
   }, []);
 
   return (
-    <section ref={sectionRef} aria-label="One bakery's evening" className="relative h-[360vh]">
+    <section ref={sectionRef} id="story" aria-label="One bakery's evening" className="relative h-[360vh]">
       <div ref={stageRef} data-scene="0" className="story-stage sticky top-0 flex h-[100svh] flex-col justify-center overflow-hidden">
-        <div className="mx-auto grid w-full max-w-[1400px] items-center gap-6 px-5 md:grid-cols-[minmax(0,0.85fr)_minmax(0,2fr)] md:px-10">
-          <ol className="relative h-[220px] md:h-[300px]">
+        <div className="mx-auto grid w-full max-w-[1320px] grid-cols-1 items-center gap-8 px-5 md:grid-cols-[minmax(0,0.8fr)_minmax(0,2fr)] md:px-10">
+          <ol className="relative h-[230px] md:h-[300px]">
             {CAPTIONS.map((caption, index) => (
               <li key={caption.title} data-index={index} className="story-caption">
                 <p className="eyebrow">
-                  {caption.time} <span className="text-terracotta-deep">· {index + 1} of 4</span>
+                  {caption.time} <span className="text-orange">· {index + 1} of 4</span>
                 </p>
-                <h2 className="mt-2 font-display text-[clamp(1.8rem,3.4vw,3rem)] font-semibold leading-[1.02]">{caption.title}</h2>
-                <p className="mt-3 max-w-[38ch] text-[1.02rem] leading-relaxed text-ink-soft">{caption.body}</p>
+                <h2 className="mt-3 text-[clamp(1.9rem,3.3vw,3rem)] font-semibold leading-[1.02] tracking-[-0.035em]">{caption.title}</h2>
+                <p className="mt-4 max-w-[38ch] text-[1.02rem] leading-relaxed text-muted">{caption.body}</p>
               </li>
             ))}
           </ol>
-          <div className="relative aspect-[1200/560] w-full overflow-hidden rounded-[16px] border-[1.5px] border-ink">
+          <div className="relative aspect-[1200/560] w-full overflow-hidden rounded-[26px] border border-line-strong shadow-[0_40px_120px_-40px_oklch(0.73_0.2_8/0.55)]">
             <svg viewBox="0 0 1200 560" className="absolute inset-0 h-full w-full" aria-hidden="true">
+              <Defs />
               <Scenery routeRef={routeRef} />
               <Bakery />
               <YouthCenter />
@@ -259,34 +317,34 @@ export function ScrollStory() {
                 <Van />
               </g>
             </svg>
-            <div className="story-phone absolute left-[34%] top-[7%] w-[32%] min-w-[190px] rounded-[16px] border-[1.5px] border-ink bg-paper p-3 text-[clamp(0.62rem,1vw,0.85rem)]">
-              <p className="eyebrow !text-[0.62rem]">Golden Crust Bakery</p>
-              <p className="mt-1.5 rounded-[10px_10px_10px_2px] bg-linen px-2.5 py-1.5 leading-snug">
+            <div className="story-phone story-card absolute left-[34%] top-[7%] w-[32%] min-w-[190px] rounded-[18px] p-3 text-[clamp(0.62rem,1vw,0.85rem)]">
+              <p className="eyebrow !text-[0.6rem]">Golden Crust Bakery</p>
+              <p className="mt-1.5 rounded-[12px_12px_12px_3px] bg-white/[0.07] px-2.5 py-1.5 leading-snug">
                 <span ref={typedRef} />
                 <span aria-hidden className="story-caret" />
               </p>
               <ul className="mt-2 flex flex-wrap gap-1">
                 {FIELDS.map((field) => (
-                  <li key={field} className="story-field rounded-full border border-line px-2 py-0.5 font-semibold">
+                  <li key={field} className="story-field rounded-full bg-violet/15 px-2 py-0.5 font-semibold text-violet ring-1 ring-inset ring-violet/35">
                     {field}
                   </li>
                 ))}
               </ul>
             </div>
-            <div className="story-match absolute left-[58%] top-[10%] max-w-[30%] rounded-[16px] bg-ink px-3 py-2 text-[clamp(0.6rem,0.95vw,0.82rem)] text-paper">
-              <p className="font-semibold">Matched: Northside Youth Center</p>
-              <p className="text-paper/75">Asked for bakery items · open until 7:00 PM</p>
+            <div className="story-match story-card absolute left-[58%] top-[10%] max-w-[30%] rounded-[16px] px-3 py-2 text-[clamp(0.6rem,0.95vw,0.82rem)] ring-1 ring-cyan/40">
+              <p className="font-semibold text-cyan">Matched: Northside Youth Center</p>
+              <p className="text-muted">Asked for bakery items · open until 7:00 PM</p>
             </div>
-            <div className="story-meals absolute right-[3%] top-[8%] rounded-[16px] bg-sage-deep px-3 py-2 text-paper">
-              <p className="font-display text-[clamp(1.4rem,3vw,2.6rem)] font-bold leading-none">
+            <div className="story-meals story-card absolute right-[3%] top-[8%] rounded-[18px] px-4 py-3 ring-1 ring-mint/40">
+              <p className="text-fresh text-[clamp(1.5rem,3.2vw,2.8rem)] font-semibold leading-none tracking-[-0.04em]">
                 <span ref={mealsRef}>0</span> meals
               </p>
-              <p className="text-[clamp(0.58rem,0.85vw,0.75rem)] text-paper/80">from 30 lbs of bread</p>
+              <p className="mt-1 text-[clamp(0.58rem,0.85vw,0.75rem)] text-muted">from 30 lbs of bread</p>
             </div>
           </div>
         </div>
-        <div aria-hidden className="story-rail absolute right-3 top-1/2 h-40 w-[3px] -translate-y-1/2 overflow-hidden rounded-full bg-line md:right-5">
-          <div className="story-rail-fill h-full w-full origin-top bg-terracotta" />
+        <div aria-hidden className="absolute right-3 top-1/2 h-40 w-[3px] -translate-y-1/2 overflow-hidden rounded-full bg-white/10 md:right-5">
+          <div className="story-rail-fill h-full w-full origin-top bg-[image:linear-gradient(var(--orange),var(--pink),var(--violet))]" />
         </div>
       </div>
     </section>

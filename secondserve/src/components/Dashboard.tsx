@@ -11,24 +11,25 @@ import type { AppState, Donor } from '@/lib/types';
 import { ActivityLog } from './ActivityLog';
 import { AreaPicker } from './AreaPicker';
 import { ControlBar } from './Header';
+import { Hero } from './Hero';
 import { EveningSummary, Toasts } from './Highlights';
 import { ImpactStrip } from './ImpactStrip';
 import { ListingDetail } from './ListingDetail';
 import { LiveFeed } from './LiveFeed';
+import { MapHud, MapLegend } from './MapOverlays';
 import { PostSurplus } from './PostSurplus';
 import { PredictionsPanel } from './PredictionsPanel';
 import { ScrollStory } from './ScrollStory';
-import { MotionToggle } from './ui';
 
 // Leaflet needs the browser, so the map only renders on the client.
 const MapView = dynamic(() => import('./MapView'), {
   ssr: false,
-  loading: () => <div className="grid h-full place-items-center text-sm text-ink-soft">Unfolding the map…</div>,
+  loading: () => <div className="grid h-full place-items-center font-mono text-xs uppercase tracking-[0.14em] text-faint">Unfolding the map…</div>,
 });
 
 const TICK_MS = 500;
 const SPEEDS = [1, 2, 4] as const; // simulated minutes per tick
-const SOURCE_LINK = 'underline decoration-terracotta/60 underline-offset-2 hover:decoration-terracotta';
+const SOURCE_LINK = 'text-muted underline decoration-white/20 underline-offset-2 transition-colors hover:text-fg hover:decoration-white/60';
 
 function downloadCsv(filename: string, csv: string) {
   const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
@@ -39,72 +40,33 @@ function downloadCsv(filename: string, csv: string) {
   window.setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
-function Masthead({ onShare }: { onShare: () => void }) {
-  return (
-    <header className="mx-auto w-full max-w-[1400px] px-5 pt-5 md:px-10">
-      <div className="flex items-center justify-between gap-4 border-b-[1.5px] border-ink pb-3">
-        <p className="font-display text-2xl font-semibold">
-          Second<span className="text-terracotta">Serve</span>
-        </p>
-        <nav aria-label="Page" className="flex items-center gap-5 text-sm">
-          <a href="#live" className="hidden underline-offset-4 hover:underline sm:inline">
-            Watch a live evening
-          </a>
-          <MotionToggle />
-          <button type="button" onClick={onShare} className="btn btn-primary !py-1.5 text-sm">
-            Share extra food
-          </button>
-        </nav>
-      </div>
-      <div className="grid gap-8 pb-4 pt-12 md:grid-cols-[1.5fr_1fr] md:items-end md:pt-20">
-        <h1 className="animate-reveal font-display text-[clamp(2.7rem,7.4vw,6.4rem)] font-semibold leading-[0.93] tracking-[-0.02em]">
-          Good food deserves a <span className="marker italic text-terracotta-deep">second</span> serving.
-        </h1>
-        <div className="max-w-[46ch]">
-          <p className="text-lg leading-relaxed">
-            When bakeries, grocers and restaurants close for the night, good food is often still on the shelves. SecondServe gets it to the food bank down the
-            street before it&apos;s thrown away.
-          </p>
-          <p className="mt-4 text-sm leading-relaxed text-ink-soft">
-            In 2024, 29% of the U.S. food supply went unsold or uneaten (
-            <a className={SOURCE_LINK} href="https://refed.org/food-waste/the-problem/" target="_blank" rel="noopener noreferrer">
-              ReFED
-            </a>
-            ), while 47.9 million people lived in households that couldn&apos;t always afford enough food (
-            <a className={SOURCE_LINK} href="https://ers.usda.gov/publications/113622" target="_blank" rel="noopener noreferrer">
-              USDA
-            </a>
-            ).
-          </p>
-          <p className="eyebrow mt-6 flex items-center gap-2">
-            Scroll to follow one bakery&apos;s bread <span aria-hidden className="animate-bob">↓</span>
-          </p>
-        </div>
-      </div>
-    </header>
-  );
-}
-
-function MapLegend() {
-  const dot = 'inline-block h-3 w-3 rounded-full border-[1.5px] border-paper shadow-[0_0_0_1px_var(--ink)]';
-  return (
-    <div className="pointer-events-none absolute bottom-3 left-3 z-[500] space-y-1 rounded-[10px] border-[1.5px] border-ink bg-paper px-3 py-2 text-xs">
-      <div className="flex items-center gap-2"><span className={`${dot} bg-terracotta`} />Business with extra food</div>
-      <div className="flex items-center gap-2"><span className={`${dot} bg-sage-deep`} />Food bank or shelter</div>
-      <div className="flex items-center gap-2"><span className={`${dot} bg-honey`} />Volunteer driver</div>
-      <div className="flex items-center gap-2"><span className="inline-block w-5 border-t-2 border-dashed border-honey" />Driving to pick up</div>
-      <div className="flex items-center gap-2"><span className="inline-block w-5 border-t-2 border-dusk" />Delivering</div>
-    </div>
-  );
+/** Moves the soft light on whichever `.spot` card is under the pointer. One listener for the page. */
+function useCardSpotlight() {
+  useEffect(() => {
+    const handleMove = (event: PointerEvent) => {
+      const card = event.target instanceof Element ? event.target.closest('.spot') : null;
+      if (!(card instanceof HTMLElement)) return;
+      const rect = card.getBoundingClientRect();
+      card.style.setProperty('--mx', `${event.clientX - rect.left}px`);
+      card.style.setProperty('--my', `${event.clientY - rect.top}px`);
+    };
+    document.addEventListener('pointermove', handleMove, { passive: true });
+    return () => document.removeEventListener('pointermove', handleMove);
+  }, []);
 }
 
 function Footer() {
   return (
-    <footer className="mx-auto w-full max-w-[1400px] space-y-1.5 border-t-[1.5px] border-ink px-5 py-6 text-xs leading-relaxed text-ink-soft md:px-10">
-      <p>
-        This is a demo. The businesses, food banks and volunteers are made up. The map, the streets, the road routes and the AI are real.
-      </p>
-      <p>
+    <footer id="sources" className="mx-auto w-full max-w-[1320px] scroll-mt-6 border-t border-line px-5 py-10 text-xs leading-relaxed text-faint md:px-10">
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <p className="flex items-center gap-2 text-sm font-semibold text-fg">
+          <span aria-hidden className="h-2 w-2 rounded-full bg-[image:var(--brand)] shadow-[0_0_10px_var(--pink)]" />
+          SecondServe
+        </p>
+        <p>Made with care at Dublin HacX 2026.</p>
+      </div>
+      <p className="mt-4">This is a demo. The businesses, food banks and volunteers are made up. The map, the streets, the road routes and the AI are real.</p>
+      <p className="mt-2">
         Sources:{' '}
         <a className={SOURCE_LINK} href="https://calrecycle.ca.gov/organics/slcp/foodrecovery/donors/" target="_blank" rel="noopener noreferrer">
           CalRecycle, SB 1383 food donation rules
@@ -136,7 +98,6 @@ function Footer() {
         </a>
         . Place search by Nominatim. Road routes by OSRM.
       </p>
-      <p>Made with care at Dublin HacX 2026.</p>
     </footer>
   );
 }
@@ -148,6 +109,7 @@ export default function Dashboard() {
   const [speed, setSpeed] = useState<number>(2);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [isPosting, setIsPosting] = useState(false);
+  useCardSpotlight();
 
   const isFinished = state.now >= SIM_END;
   const isRunning = isPlaying && !isFinished;
@@ -194,58 +156,68 @@ export default function Dashboard() {
 
   return (
     <main className="flex min-h-screen flex-col">
-      <Masthead onShare={openPosting} />
+      <Hero onShare={openPosting} />
       <ScrollStory />
-      <section id="live" aria-labelledby="live-heading" className="mx-auto w-full max-w-[1400px] scroll-mt-2 px-5 pb-10 md:px-10">
-        <div className="grid gap-6 pb-6 pt-10 md:grid-cols-[1.2fr_1fr] md:items-end">
-          <div>
-            <p className="eyebrow">A whole evening, live</p>
-            <h2 id="live-heading" className="mt-2 font-display text-balance text-[clamp(1.9rem,3.8vw,3.2rem)] font-semibold leading-[1.05]">
-              Tonight in <span className="text-terracotta-deep">{state.areaName}</span>
-            </h2>
-            <p className="mt-3 max-w-[54ch] leading-relaxed text-ink-soft">
-              Six local food businesses, five food programs and three volunteer drivers. Press play and watch good food find its way to people, one post at a time.
-            </p>
+      <section id="live" aria-labelledby="live-heading" className="relative scroll-mt-2 pb-16">
+        <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-[700px] bg-[radial-gradient(ellipse_60%_50%_at_50%_0%,oklch(0.73_0.17_295/0.16),transparent_70%)]" />
+        <div className="relative mx-auto w-full max-w-[1320px] px-5 md:px-10">
+          <div className="grid grid-cols-1 gap-6 pb-8 pt-12 lg:grid-cols-[1.25fr_1fr] lg:items-end">
+            <div>
+              <p className="eyebrow inline-flex items-center gap-2 rounded-full bg-white/5 px-3 py-1 ring-1 ring-inset ring-line-strong">
+                <span className="live-dot text-mint" /> Live demo · a whole evening
+              </p>
+              <h2 id="live-heading" className="mt-5 text-balance text-[clamp(2.2rem,4.6vw,4rem)] font-semibold leading-[1] tracking-[-0.045em]">
+                Tonight in <span className="accent text-brand">{state.areaName}</span>
+              </h2>
+              <p className="mt-4 max-w-[54ch] text-lg leading-relaxed text-muted">
+                Six local food businesses, five food programs and three volunteer drivers. Press play and watch good food find its way to people, one post at a
+                time.
+              </p>
+            </div>
+            <AreaPicker areaName={state.areaName} onChange={(next) => startOver(next, false)} />
           </div>
-          <AreaPicker areaName={state.areaName} onChange={(next) => startOver(next, false)} />
-        </div>
-        <ControlBar
-          now={state.now}
-          weekday={state.weekday}
-          areaName={state.areaName}
-          isRunning={isRunning}
-          isFinished={isFinished}
-          speed={speed}
-          speeds={SPEEDS}
-          onToggleRun={() => setIsPlaying((prev) => !prev)}
-          onSpeedChange={setSpeed}
-          onReset={() => startOver(network, false)}
-          onPost={openPosting}
-          onExport={handleExport}
-        />
-        <div className="mt-6 space-y-6">
-          {isFinished && (
-            <EveningSummary impact={impact} areaName={state.areaName} onReplay={() => startOver(network, true)} onExport={handleExport} />
-          )}
-          <ImpactStrip impact={impact} />
-          <div className="grid gap-5 lg:grid-cols-[minmax(0,1.6fr)_minmax(340px,1fr)]">
-            <section aria-label="Map" className="relative h-[480px] overflow-hidden rounded-[16px] border-[1.5px] border-ink lg:h-[580px]">
-              <MapView state={state} selectedId={shown?.id ?? null} onSelect={setSelectedId} />
-              <MapLegend />
-            </section>
-            <LiveFeed
-              listings={state.listings}
-              donors={state.donors}
-              recipients={state.recipients}
-              selectedId={shown?.id ?? null}
-              onSelect={setSelectedId}
-            />
-          </div>
-          <div className="grid gap-8 lg:grid-cols-[minmax(0,1.6fr)_minmax(340px,1fr)]">
-            <ListingDetail listing={shown} state={state} isFollowingLatest={selected === null} />
-            <div className="flex flex-col gap-8">
-              <PredictionsPanel predictions={predictions} donors={state.donors} weekday={state.weekday} onHeadsUp={handleHeadsUp} />
-              <ActivityLog events={state.events} />
+          <ControlBar
+            now={state.now}
+            weekday={state.weekday}
+            areaName={state.areaName}
+            isRunning={isRunning}
+            isFinished={isFinished}
+            speed={speed}
+            speeds={SPEEDS}
+            onToggleRun={() => setIsPlaying((prev) => !prev)}
+            onSpeedChange={setSpeed}
+            onReset={() => startOver(network, false)}
+            onPost={openPosting}
+            onExport={handleExport}
+          />
+          <div className="mt-6 space-y-4">
+            {isFinished && (
+              <EveningSummary impact={impact} areaName={state.areaName} onReplay={() => startOver(network, true)} onExport={handleExport} />
+            )}
+            <ImpactStrip impact={impact} />
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1.75fr)_minmax(340px,1fr)]">
+              <section aria-label="Map" className="map-shell h-[520px] lg:h-[640px]">
+                <div className="map-inner">
+                  <MapView state={state} selectedId={shown?.id ?? null} onSelect={setSelectedId} />
+                  <div className="map-vignette" />
+                  <MapHud state={state} inTransitLbs={impact.inTransitLbs} isRunning={isRunning} />
+                  <MapLegend />
+                </div>
+              </section>
+              <LiveFeed
+                listings={state.listings}
+                donors={state.donors}
+                recipients={state.recipients}
+                selectedId={shown?.id ?? null}
+                onSelect={setSelectedId}
+              />
+            </div>
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1.75fr)_minmax(340px,1fr)]">
+              <ListingDetail listing={shown} state={state} isFollowingLatest={selected === null} />
+              <div className="flex flex-col gap-4">
+                <PredictionsPanel predictions={predictions} donors={state.donors} weekday={state.weekday} onHeadsUp={handleHeadsUp} />
+                <ActivityLog events={state.events} />
+              </div>
             </div>
           </div>
         </div>

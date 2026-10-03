@@ -21,50 +21,57 @@ export function ControlBar({
   now, weekday, areaName, isRunning, isFinished, speed, speeds, onToggleRun, onSpeedChange, onReset, onPost, onExport,
 }: Props) {
   const runLabel = isFinished ? 'Evening finished' : isRunning ? 'Pause' : 'Play the evening';
+  const liveTone = isRunning ? 'text-mint' : 'text-faint';
   return (
-    <div className="sticky top-0 z-[700] -mx-5 border-y-[1.5px] border-ink bg-paper px-5 py-3 md:-mx-10 md:px-10">
+    <div className="glass sticky top-3 z-[700] rounded-[20px] px-3 py-2.5 md:px-4">
       <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-        <div className="mr-auto flex min-w-0 items-baseline gap-3">
-          <span className="font-display text-3xl font-semibold tabular-nums">{formatClock(now)}</span>
-          <span className="eyebrow truncate">
-            {WEEKDAYS[weekday]} in {areaName}
+        <div className="mr-auto flex min-w-0 items-center gap-3">
+          <span className={`grid h-9 w-9 shrink-0 place-items-center rounded-full bg-white/5 ring-1 ring-line-strong ${liveTone}`}>
+            {isRunning ? <span className="live-dot" /> : <span className="h-2 w-2 rounded-full bg-current" />}
           </span>
+          <div className="min-w-0 leading-tight">
+            <p className="font-mono text-2xl font-medium tabular-nums tracking-tight">{formatClock(now)}</p>
+            <p className="eyebrow truncate !text-[0.62rem]">
+              {isRunning ? 'Live · ' : ''}
+              {WEEKDAYS[weekday]} in {areaName}
+            </p>
+          </div>
         </div>
-        <button
-          type="button"
-          onClick={onToggleRun}
-          disabled={isFinished}
-          className={`btn btn-honey ${!isRunning && !isFinished ? 'animate-nudge' : ''}`}
-        >
+        <button type="button" onClick={onToggleRun} disabled={isFinished} className="btn btn-play">
           <Icon name={isRunning ? 'pause' : 'play'} className="h-4 w-4" />
           {runLabel}
         </button>
-        <label className="flex items-center gap-1.5 text-sm text-ink-soft">
-          Speed
-          <select value={speed} onChange={(event) => onSpeedChange(Number(event.target.value))} className="field px-2 py-1.5 text-ink">
-            {speeds.map((s) => (
-              <option key={s} value={s}>
-                {s}×
-              </option>
-            ))}
-          </select>
-        </label>
-        <button type="button" onClick={onReset} className="btn btn-quiet">
+        <div role="group" aria-label="Playback speed" className="flex items-center rounded-full bg-white/5 p-1 ring-1 ring-inset ring-line-strong">
+          {speeds.map((s) => (
+            <button
+              key={s}
+              type="button"
+              onClick={() => onSpeedChange(s)}
+              aria-pressed={speed === s}
+              className={`rounded-full px-2.5 py-1 font-mono text-xs font-medium transition-colors ${
+                speed === s ? 'bg-fg text-bg' : 'text-muted hover:text-fg'
+              }`}
+            >
+              {s}×
+            </button>
+          ))}
+        </div>
+        <button type="button" onClick={onReset} className="btn btn-glass" title="Start the evening over">
           <Icon name="restart" className="h-4 w-4" />
-          Start over
-        </button>
-        <button type="button" onClick={onPost} className="btn btn-primary">
-          <Icon name="plus" className="h-4 w-4" />
-          Share extra food
+          <span className="hidden sm:inline">Start over</span>
         </button>
         <button
           type="button"
           onClick={onExport}
-          className="btn btn-quiet"
+          className="btn btn-glass"
           title="A spreadsheet of tonight's donations: who gave, who received, food types and pounds. California's SB 1383 law asks large food businesses to keep records like these."
         >
           <Icon name="download" className="h-4 w-4" />
-          Donation records
+          <span className="hidden sm:inline">Donation records</span>
+        </button>
+        <button type="button" onClick={onPost} className="btn btn-primary">
+          <Icon name="plus" className="h-4 w-4" />
+          Share extra food
         </button>
       </div>
     </div>

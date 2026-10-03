@@ -27,11 +27,16 @@ export function PredictionsPanel({ predictions, donors, weekday, onHeadsUp }: Pr
   }
 
   return (
-    <section aria-labelledby="predict-heading" className="border-t-[1.5px] border-ink pt-4">
-      <h3 id="predict-heading" className="font-display text-xl font-semibold">
-        Who usually has extra on {dayName}s
-      </h3>
-      <p className="mt-1 text-xs text-ink-soft">
+    <section aria-labelledby="predict-heading" className="card p-5">
+      <div className="flex items-center gap-2.5">
+        <span className="grid h-8 w-8 place-items-center rounded-[10px] bg-violet/12 text-violet ring-1 ring-inset ring-violet/30">
+          <Icon name="sparkle" className="h-4 w-4" />
+        </span>
+        <h3 id="predict-heading" className="font-semibold tracking-tight">
+          Who usually has extra on {dayName}s
+        </h3>
+      </div>
+      <p className="mt-2 text-xs text-faint">
         Learned from the last {weeksTracked} {dayName}s of posts. A good guess, not a promise.
       </p>
       <ul className="mt-3 divide-y divide-line">
@@ -41,18 +46,18 @@ export function PredictionsPanel({ predictions, donors, weekday, onHeadsUp }: Pr
           const isSent = sentIds.includes(prediction.donorId);
           const percent = Math.round(prediction.likelihood * 100);
           return (
-            <li key={prediction.donorId} className="py-3">
+            <li key={prediction.donorId} className="py-3.5">
               <div className="flex items-center justify-between gap-2">
-                <span className="flex items-center gap-2 font-semibold">
-                  <Icon name={DONOR_ICON[donor.kind]} className="h-[18px] w-[18px] text-terracotta-deep" />
-                  {donor.name}
+                <span className="flex min-w-0 items-center gap-2 text-sm font-semibold">
+                  <Icon name={DONOR_ICON[donor.kind]} className="h-4 w-4 shrink-0 text-orange" />
+                  <span className="truncate">{donor.name}</span>
                 </span>
-                <span className="font-display text-lg font-semibold tabular-nums">{percent}%</span>
+                <span className="text-brand font-mono text-lg font-semibold tabular-nums">{percent}%</span>
               </div>
-              <div className="mt-1.5 h-1 overflow-hidden rounded-full bg-line">
-                <div className="animate-grow-x h-full rounded-full bg-terracotta" style={{ width: `${percent}%` }} />
+              <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/[0.06]">
+                <div className="animate-grow-x h-full rounded-full bg-[image:var(--brand)]" style={{ width: `${percent}%` }} />
               </div>
-              <p className="mt-1.5 text-sm text-ink-soft">
+              <p className="mt-2 text-sm text-muted">
                 Usually about {prediction.typicalLbs} lbs of {CATEGORY_LABEL[prediction.category]} around{' '}
                 {formatClock(prediction.typicalMinute)}. Happened on {prediction.weeksSeen} of the last {prediction.weeksTotal} {dayName}s.
               </p>
@@ -60,7 +65,7 @@ export function PredictionsPanel({ predictions, donors, weekday, onHeadsUp }: Pr
                 type="button"
                 onClick={() => handleHeadsUp(prediction, donor)}
                 disabled={isSent}
-                className="btn btn-quiet mt-2 !px-3 !py-1 text-xs disabled:!opacity-100 disabled:text-sage-deep"
+                className="btn btn-glass mt-2.5 !px-3 !py-1 text-xs disabled:!opacity-100 disabled:text-mint"
               >
                 {isSent ? (
                   <>

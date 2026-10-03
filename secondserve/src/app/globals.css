@@ -1,199 +1,380 @@
 @import "tailwindcss";
 
-/* Bright, fresh-market palette built in OKLCH: tangerine, sunshine, leaf green and sky blue
-   on clean cream, with deep navy ink for crisp contrast. Token names are kept from v1. */
+/* Midnight-kitchen theme: a deep indigo night, a sunset brand gradient (orange → pink → violet),
+   and one neon color per role so the map reads at a glance:
+   orange = extra food, mint = food banks and food saved, yellow = drivers, cyan = deliveries, violet = AI. */
 :root {
-  --paper: oklch(0.985 0.01 90);
-  --linen: oklch(0.96 0.03 88);
-  --ink: oklch(0.25 0.045 270);
-  --ink-soft: oklch(0.47 0.035 270);
-  --line: oklch(0.89 0.02 90);
-  --terracotta: oklch(0.68 0.19 45);
-  --terracotta-deep: oklch(0.54 0.18 40);
-  --honey: oklch(0.87 0.16 90);
-  --sage: oklch(0.7 0.17 150);
-  --sage-deep: oklch(0.5 0.13 155);
-  --dusk: oklch(0.6 0.16 250);
-  --plum: oklch(0.6 0.2 355);
-  --sky: oklch(0.93 0.045 225);
+  color-scheme: dark;
+  --bg: oklch(0.135 0.02 272);
+  --surface: oklch(0.175 0.022 272);
+  --raised: oklch(0.215 0.024 272);
+  --fg: oklch(0.97 0.006 272);
+  --muted: oklch(0.76 0.02 272);
+  --faint: oklch(0.63 0.02 272);
+  --line: oklch(1 0 0 / 0.085);
+  --line-strong: oklch(1 0 0 / 0.16);
+  --orange: oklch(0.77 0.17 52);
+  --pink: oklch(0.73 0.2 8);
+  --violet: oklch(0.73 0.17 295);
+  --cyan: oklch(0.84 0.13 212);
+  --mint: oklch(0.86 0.16 162);
+  --yellow: oklch(0.92 0.16 100);
+  --red: oklch(0.72 0.19 22);
+  --brand: linear-gradient(100deg, var(--orange), var(--pink) 48%, var(--violet));
+  --fresh: linear-gradient(100deg, var(--mint), var(--cyan));
   /* Motion: entrances ease out, exits ease in, moves ease in and out. */
-  --ease-enter: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-enter: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-exit: cubic-bezier(0.4, 0, 1, 1);
   --ease-move: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @theme inline {
-  --color-paper: var(--paper);
-  --color-linen: var(--linen);
-  --color-ink: var(--ink);
-  --color-ink-soft: var(--ink-soft);
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-raised: var(--raised);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
   --color-line: var(--line);
-  --color-terracotta: var(--terracotta);
-  --color-terracotta-deep: var(--terracotta-deep);
-  --color-honey: var(--honey);
-  --color-sage: var(--sage);
-  --color-sage-deep: var(--sage-deep);
-  --color-dusk: var(--dusk);
-  --color-plum: var(--plum);
-  /* Older names kept so every component shares one palette. */
-  --color-cream: var(--linen);
-  --color-tomato: var(--terracotta-deep);
-  --color-leaf: var(--sage-deep);
-  --color-mustard: var(--honey);
-  --color-sky: var(--dusk);
-  --font-sans: var(--font-instrument);
-  --font-display: var(--font-fraunces);
+  --color-line-strong: var(--line-strong);
+  --color-orange: var(--orange);
+  --color-pink: var(--pink);
+  --color-violet: var(--violet);
+  --color-cyan: var(--cyan);
+  --color-mint: var(--mint);
+  --color-yellow: var(--yellow);
+  --color-red: var(--red);
+  --font-sans: var(--font-geist);
+  --font-mono: var(--font-geist-mono);
+  --font-serif: var(--font-serif);
+}
+
+@property --angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
 }
 
 html {
   scroll-behavior: smooth;
+  background: var(--bg);
 }
 
 body {
-  background-color: var(--paper);
-  color: var(--ink);
-  font-family: var(--font-instrument), system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-geist), system-ui, sans-serif;
+  font-feature-settings: "ss01", "cv11";
+}
+
+/* Film grain over everything, for a little texture on the flat night. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 3000;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
 ::selection {
-  background: var(--honey);
-  color: var(--ink);
+  background: oklch(0.73 0.2 8 / 0.45);
+  color: var(--fg);
 }
 
 :focus-visible {
-  outline: 2.5px solid var(--terracotta);
+  outline: 2px solid var(--cyan);
   outline-offset: 2px;
 }
 
-.font-display {
-  font-variation-settings: "SOFT" 40, "WONK" 0;
-}
-
-/* A sunshine marker stroke behind a highlighted word. */
-.marker {
-  background: linear-gradient(transparent 58%, var(--honey) 58%, var(--honey) 92%, transparent 92%);
-  padding: 0 0.08em;
-}
-
+/* ---------- Type ---------- */
 .eyebrow {
-  font-size: 0.72rem;
-  font-weight: 600;
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.7rem;
+  font-weight: 500;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--ink-soft);
+  color: var(--muted);
+}
+
+.text-brand {
+  background: var(--brand);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.text-fresh {
+  background: var(--fresh);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* The italic serif accent inside sans headlines. */
+.accent {
+  font-family: var(--font-serif), Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  padding-right: 0.06em;
+}
+
+/* Component classes live in the components layer so Tailwind utilities on the same element win. */
+@layer components {
+/* ---------- Surfaces ---------- */
+.card {
+  position: relative;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: linear-gradient(180deg, oklch(0.195 0.024 272), oklch(0.165 0.022 272));
+  box-shadow:
+    inset 0 1px 0 oklch(1 0 0 / 0.06),
+    0 24px 60px -30px oklch(0 0 0 / 0.7);
+}
+
+.glass {
+  border: 1px solid var(--line-strong);
+  background: oklch(0.19 0.024 272 / 0.62);
+  -webkit-backdrop-filter: blur(18px) saturate(150%);
+  backdrop-filter: blur(18px) saturate(150%);
+  box-shadow:
+    inset 0 1px 0 oklch(1 0 0 / 0.07),
+    0 18px 50px -20px oklch(0 0 0 / 0.75);
+}
+
+/* A soft light that follows the cursor across a card (positions set by the page). */
+.spot::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), oklch(1 0 0 / 0.07), transparent 45%);
+  transition: opacity 300ms var(--ease-move);
+}
+
+.spot:hover::before {
+  opacity: 1;
+}
+
+/* A colored glow in the corner of a stat tile. */
+.tile-glow::after {
+  content: "";
+  position: absolute;
+  top: -40%;
+  right: -25%;
+  width: 70%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(circle, color-mix(in oklch, var(--tone) 32%, transparent), transparent 70%);
+}
+
+.grid-bg {
+  background-image:
+    linear-gradient(var(--line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 64px 64px;
+  -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 0%, #000 25%, transparent 75%);
+  mask-image: radial-gradient(ellipse 80% 70% at 50% 0%, #000 25%, transparent 75%);
+}
+
+/* Aurora: three soft color fields drifting slowly behind the hero. Transforms only. */
+.aurora {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.aurora span {
+  position: absolute;
+  width: 62vmax;
+  height: 62vmax;
+  border-radius: 50%;
+  will-change: transform;
+}
+
+.aurora span:nth-child(1) {
+  top: -34vmax;
+  left: -12vmax;
+  background: radial-gradient(circle, oklch(0.77 0.17 52 / 0.38), transparent 62%);
+  animation: drift-a 22s var(--ease-move) infinite alternate;
+}
+
+.aurora span:nth-child(2) {
+  top: -30vmax;
+  right: -18vmax;
+  background: radial-gradient(circle, oklch(0.73 0.17 295 / 0.42), transparent 62%);
+  animation: drift-b 26s var(--ease-move) infinite alternate;
+}
+
+.aurora span:nth-child(3) {
+  top: -8vmax;
+  left: 22vmax;
+  background: radial-gradient(circle, oklch(0.73 0.2 8 / 0.3), transparent 60%);
+  animation: drift-c 30s var(--ease-move) infinite alternate;
 }
 
 /* ---------- Buttons and fields ---------- */
 .btn {
   display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
+  justify-content: center;
+  gap: 0.5rem;
   border-radius: 999px;
-  padding: 0.55rem 1.1rem;
+  padding: 0.6rem 1.15rem;
+  font-size: 0.92rem;
   font-weight: 600;
   line-height: 1.2;
+  white-space: nowrap;
   transition:
-    transform 140ms var(--ease-enter),
-    background-color 160ms var(--ease-move),
-    box-shadow 160ms var(--ease-move);
+    transform 160ms var(--ease-enter),
+    background-color 180ms var(--ease-move),
+    box-shadow 220ms var(--ease-move),
+    filter 180ms var(--ease-move);
 }
 
-.btn:active {
-  transform: translateY(1px);
+.btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(0) scale(0.98);
 }
 
 .btn:disabled {
-  opacity: 0.55;
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
 .btn-primary {
-  background: var(--terracotta);
-  color: var(--paper);
-  box-shadow: 0 2px 0 var(--terracotta-deep);
+  background: var(--brand);
+  color: oklch(0.16 0.03 272);
+  box-shadow:
+    inset 0 1px 0 oklch(1 0 0 / 0.35),
+    0 10px 30px -8px oklch(0.73 0.2 8 / 0.6);
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: oklch(0.56 0.135 40);
+  filter: brightness(1.08) saturate(1.1);
+  box-shadow:
+    inset 0 1px 0 oklch(1 0 0 / 0.35),
+    0 14px 40px -6px oklch(0.73 0.2 8 / 0.8);
 }
 
-.btn-ink {
-  background: var(--ink);
-  color: var(--paper);
-  box-shadow: 0 2px 0 oklch(0.2 0.03 52);
+.btn-light {
+  background: var(--fg);
+  color: var(--bg);
+  box-shadow: 0 8px 26px -10px oklch(1 0 0 / 0.45);
 }
 
-.btn-honey {
-  background: var(--honey);
-  color: var(--ink);
-  box-shadow: 0 2px 0 oklch(0.66 0.12 72);
+.btn-light:hover:not(:disabled) {
+  background: oklch(1 0 0);
 }
 
-.btn-quiet {
-  color: var(--ink);
-  box-shadow: inset 0 0 0 1.5px var(--line);
+.btn-play {
+  background: var(--mint);
+  color: oklch(0.18 0.04 165);
+  box-shadow:
+    inset 0 1px 0 oklch(1 0 0 / 0.4),
+    0 10px 30px -8px oklch(0.86 0.16 162 / 0.65);
 }
 
-.btn-quiet:hover:not(:disabled) {
-  background: var(--linen);
-  box-shadow: inset 0 0 0 1.5px var(--ink-soft);
+.btn-play:hover:not(:disabled) {
+  filter: brightness(1.06);
+}
+
+.btn-ai {
+  background: linear-gradient(100deg, var(--violet), var(--pink));
+  color: oklch(0.16 0.03 272);
+  box-shadow:
+    inset 0 1px 0 oklch(1 0 0 / 0.35),
+    0 10px 30px -8px oklch(0.73 0.17 295 / 0.7);
+}
+
+.btn-glass {
+  color: var(--fg);
+  background: oklch(1 0 0 / 0.05);
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+}
+
+.btn-glass:hover:not(:disabled) {
+  background: oklch(1 0 0 / 0.1);
 }
 
 .field {
   border-radius: 12px;
-  border: 1.5px solid var(--line);
-  background: var(--paper);
-  transition: border-color 160ms var(--ease-move);
+  border: 1px solid var(--line-strong);
+  background: oklch(1 0 0 / 0.04);
+  color: var(--fg);
+  transition:
+    border-color 160ms var(--ease-move),
+    box-shadow 160ms var(--ease-move);
 }
 
-.field:focus {
-  border-color: var(--ink);
+.field::placeholder {
+  color: var(--faint);
+}
+
+.field:focus,
+.field:focus-within {
+  border-color: oklch(0.73 0.17 295 / 0.8);
+  box-shadow: 0 0 0 4px oklch(0.73 0.17 295 / 0.18);
   outline: none;
 }
 
-/* ---------- Pickup tickets (food posts) ---------- */
+select.field option {
+  background: var(--raised);
+  color: var(--fg);
+}
+
+/* ---------- Food posts in the feed ---------- */
 .ticket {
   position: relative;
-  border: 1.5px solid var(--line);
-  border-radius: 12px;
-  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: oklch(1 0 0 / 0.025);
   transition:
-    border-color 160ms var(--ease-move),
-    box-shadow 200ms var(--ease-move),
-    transform 200ms var(--ease-move);
-}
-
-.ticket::before,
-.ticket::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  width: 12px;
-  height: 12px;
-  margin-top: -6px;
-  border: 1.5px solid var(--line);
-  border-radius: 50%;
-  background: var(--linen);
-}
-
-.ticket::before {
-  left: -7px;
-  clip-path: inset(0 0 0 50%);
-}
-
-.ticket::after {
-  right: -7px;
-  clip-path: inset(0 50% 0 0);
+    border-color 180ms var(--ease-move),
+    background-color 180ms var(--ease-move),
+    box-shadow 240ms var(--ease-move),
+    transform 240ms var(--ease-move);
 }
 
 .ticket:hover {
-  border-color: var(--ink-soft);
+  border-color: var(--line-strong);
+  background: oklch(1 0 0 / 0.05);
 }
 
 .ticket-selected {
-  border-color: var(--ink);
-  box-shadow: 3px 3px 0 var(--ink);
-  transform: translate(-1px, -1px);
+  border-color: oklch(0.77 0.17 52 / 0.7);
+  background: oklch(0.77 0.17 52 / 0.07);
+  box-shadow: 0 0 0 1px oklch(0.77 0.17 52 / 0.35), 0 12px 36px -12px oklch(0.77 0.17 52 / 0.5);
+}
+
+}
+
+/* ---------- Live dot ---------- */
+.live-dot {
+  position: relative;
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.live-dot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: currentColor;
+  animation: ping 1.6s var(--ease-enter) infinite;
 }
 
 /* ---------- Scroll story ---------- */
@@ -210,11 +391,13 @@ body {
   position: absolute;
   inset: 0;
   opacity: 0;
-  transform: translateY(14px);
+  transform: translateY(16px);
+  filter: blur(6px);
   pointer-events: none;
   transition:
     opacity 220ms var(--ease-exit),
-    transform 220ms var(--ease-exit);
+    transform 220ms var(--ease-exit),
+    filter 220ms var(--ease-exit);
 }
 
 .story-stage[data-scene="0"] .story-caption[data-index="0"],
@@ -223,17 +406,23 @@ body {
 .story-stage[data-scene="3"] .story-caption[data-index="3"] {
   opacity: 1;
   transform: none;
+  filter: none;
   transition:
-    opacity 380ms var(--ease-enter) 60ms,
-    transform 480ms var(--ease-enter) 60ms;
+    opacity 420ms var(--ease-enter) 60ms,
+    transform 520ms var(--ease-enter) 60ms,
+    filter 420ms var(--ease-enter) 60ms;
 }
 
-.story-dusk {
-  opacity: calc(var(--p) * 0.2);
+.story-night {
+  opacity: calc(var(--p) * 0.6);
+}
+
+.story-stars {
+  opacity: calc(0.25 + var(--p) * 0.75);
 }
 
 .story-sun {
-  transform: translateY(calc(var(--p) * 90px));
+  transform: translateY(calc(var(--p) * 120px));
 }
 
 .story-loaves-out {
@@ -245,7 +434,7 @@ body {
 }
 
 .story-window-light {
-  opacity: calc(0.12 + clamp(0, var(--s3) * 3, 1) * 0.88);
+  opacity: calc(0.1 + clamp(0, var(--s3) * 3, 1) * 0.9);
 }
 
 .story-van {
@@ -286,7 +475,7 @@ body {
   height: 1em;
   margin-left: 1px;
   vertical-align: -2px;
-  background: var(--ink);
+  background: var(--fg);
   animation: caret 1s steps(1) infinite;
 }
 
@@ -297,8 +486,14 @@ body {
 
 .story-meals {
   opacity: clamp(0, var(--s3) * 5, 1);
-  transform: scale(calc(0.92 + clamp(0, var(--s3) * 5, 1) * 0.08));
+  transform: scale(calc(0.9 + clamp(0, var(--s3) * 5, 1) * 0.1));
   transform-origin: top right;
+}
+
+.story-card {
+  border: 1px solid var(--line-strong);
+  background: oklch(0.19 0.024 272 / 0.92);
+  box-shadow: 0 18px 50px -20px oklch(0 0 0 / 0.75);
 }
 
 .story-rail-fill {
@@ -306,39 +501,118 @@ body {
 }
 
 /* ---------- Map ---------- */
+
+/* The map frame: a slowly turning sunset-to-mint border with a glow behind it. */
+.map-shell {
+  position: relative;
+  isolation: isolate;
+  border-radius: 26px;
+  padding: 1px;
+}
+
+.map-shell::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: conic-gradient(from var(--angle), var(--orange), var(--pink), var(--violet), var(--cyan), var(--mint), var(--orange));
+  animation: spin-angle 10s linear infinite;
+}
+
+.map-shell::after {
+  content: "";
+  position: absolute;
+  inset: 4% 3%;
+  z-index: -2;
+  border-radius: inherit;
+  background: conic-gradient(from 200deg, var(--orange), var(--pink), var(--violet), var(--cyan), var(--mint), var(--orange));
+  filter: blur(48px);
+  opacity: 0.38;
+}
+
+.map-inner {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 25px;
+  background: var(--bg);
+}
+
+/* Inner shadow around the edges so the map sinks into the page. */
+.map-vignette {
+  position: absolute;
+  inset: 0;
+  z-index: 450;
+  pointer-events: none;
+  border-radius: inherit;
+  box-shadow: inset 0 0 120px 10px oklch(0.135 0.02 272 / 0.85);
+}
+
 .leaflet-container {
-  background: var(--linen);
+  background: oklch(0.16 0.02 260);
   font-family: inherit;
 }
 
-/* Calm OpenStreetMap's colors a little so the pins and routes stand out. */
+/* OpenStreetMap's own dark-mode recipe (invert, then turn the hues back), muted to a slate night
+   so only the pins and routes glow. */
 .leaflet-tile-pane {
-  filter: saturate(0.7) brightness(1.04);
+  filter: invert(1) hue-rotate(195deg) saturate(0.3) brightness(0.78) contrast(1.2);
+}
+
+/* Overlap tiles by a pixel to hide hairline seams at fractional screen scaling. Leaflet's
+   plus-lighter blend would brighten the overlap (a dark line once inverted), so it is turned off. */
+.leaflet-container img.leaflet-tile {
+  width: 257px !important;
+  height: 257px !important;
+  mix-blend-mode: normal !important;
 }
 
 .leaflet-tooltip {
-  border: 1.5px solid var(--ink);
-  border-radius: 4px;
-  background: var(--paper);
-  color: var(--ink);
-  box-shadow: none;
+  border: 1px solid var(--line-strong);
+  border-radius: 12px;
+  background: oklch(0.2 0.024 272 / 0.94);
+  color: var(--fg);
+  box-shadow: 0 16px 40px -12px oklch(0 0 0 / 0.8);
   font-size: 12px;
-  line-height: 1.35;
-  padding: 6px 9px;
+  line-height: 1.4;
+  padding: 8px 11px;
+}
+
+.leaflet-tooltip strong {
+  font-weight: 600;
 }
 
 .leaflet-tooltip-top::before {
-  border-top-color: var(--ink);
+  border-top-color: oklch(0.2 0.024 272 / 0.94);
 }
 
 .leaflet-bar {
-  border: 1.5px solid var(--ink) !important;
-  border-radius: 4px !important;
-  box-shadow: none !important;
+  border: 1px solid var(--line-strong) !important;
+  border-radius: 12px !important;
+  overflow: hidden;
+  box-shadow: 0 10px 30px -10px oklch(0 0 0 / 0.8) !important;
 }
 
-.leaflet-bar a {
-  color: var(--ink) !important;
+.leaflet-bar a,
+.leaflet-bar a:hover {
+  background: oklch(0.2 0.024 272 / 0.9) !important;
+  color: var(--fg) !important;
+  border-bottom-color: var(--line) !important;
+}
+
+.leaflet-bar a:hover {
+  background: oklch(0.26 0.026 272 / 0.95) !important;
+}
+
+.leaflet-control-attribution {
+  background: oklch(0.135 0.02 272 / 0.75) !important;
+  color: var(--faint) !important;
+  font-size: 10px !important;
+}
+
+.leaflet-control-attribution a {
+  color: var(--muted) !important;
 }
 
 .pin-wrap {
@@ -347,49 +621,57 @@ body {
 }
 
 .pin {
+  --glow: var(--orange);
   position: relative;
   display: grid;
   place-items: center;
-  width: 32px;
-  height: 32px;
-  border: 2px solid var(--paper);
+  width: 26px;
+  height: 26px;
   border-radius: 50%;
-  box-shadow: 0 0 0 1.5px var(--ink);
-  color: var(--paper);
+  background: var(--glow);
+  color: oklch(0.16 0.03 272);
+  box-shadow:
+    0 0 0 2.5px oklch(0.135 0.02 272 / 0.95),
+    0 0 0 4px color-mix(in oklch, var(--glow) 45%, transparent),
+    0 0 16px 2px color-mix(in oklch, var(--glow) 60%, transparent);
 }
 
 .pin svg {
-  width: 17px;
-  height: 17px;
+  width: 14px;
+  height: 14px;
 }
 
 .pin-donor {
-  background: var(--terracotta);
+  --glow: var(--orange);
 }
 
 .pin-recipient {
-  background: var(--sage-deep);
+  --glow: var(--mint);
 }
 
 .pin-driver {
-  width: 28px;
-  height: 28px;
-  background: var(--honey);
-  color: var(--ink);
+  --glow: var(--yellow);
+  width: 22px;
+  height: 22px;
 }
 
 .pin-driver svg {
-  width: 15px;
-  height: 15px;
+  width: 12px;
+  height: 12px;
 }
 
-.pin-pulse::after {
+.pin-pulse::after,
+.pin-pulse::before {
   content: "";
   position: absolute;
-  inset: -7px;
-  border: 2px solid var(--terracotta);
+  inset: -6px;
+  border: 2px solid var(--glow);
   border-radius: 50%;
-  animation: pin-pulse 1.8s var(--ease-enter) infinite;
+  animation: pin-pulse 2s var(--ease-enter) infinite;
+}
+
+.pin-pulse::before {
+  animation-delay: 1s;
 }
 
 /* Drivers glide between clock ticks instead of jumping. Off while the map zooms or is dragged. */
@@ -402,22 +684,45 @@ body {
   transition: none;
 }
 
-/* Delivery routes draw themselves onto the map. */
+/* Delivery routes draw themselves onto the map, then light moves along them. */
 .route-draw {
   stroke-dasharray: 12000;
   stroke-dashoffset: 12000;
   animation: route-draw 1.4s var(--ease-move) forwards;
 }
 
+.route-flow {
+  animation: route-flow 0.9s linear infinite;
+}
+
+.route-dots {
+  animation: route-flow-dots 1.1s linear infinite;
+}
+
+/* ---------- Hero preview (the looping live feed) ---------- */
+/* Each step has its own keyframes so they arrive one by one but clear together, then the story repeats. */
+.notif {
+  opacity: 0;
+  animation-duration: 10s;
+  animation-timing-function: var(--ease-enter);
+  animation-iteration-count: infinite;
+}
+
+.orbit {
+  animation: spin 40s linear infinite;
+}
+
 /* ---------- Motion, one recipe per role ---------- */
 @keyframes ticket-in {
   from {
     opacity: 0;
-    transform: translateX(-14px) rotate(-1deg);
+    transform: translateY(-10px) scale(0.98);
+    filter: blur(4px);
   }
   to {
     opacity: 1;
     transform: none;
+    filter: none;
   }
 }
 
@@ -442,7 +747,7 @@ body {
 @keyframes sheet-in {
   from {
     opacity: 0;
-    transform: translateY(18px);
+    transform: translateY(18px) scale(0.98);
   }
   to {
     opacity: 1;
@@ -462,7 +767,7 @@ body {
 @keyframes toast-in {
   from {
     opacity: 0;
-    transform: translateY(12px);
+    transform: translateY(14px) scale(0.96);
   }
   to {
     opacity: 1;
@@ -470,24 +775,179 @@ body {
   }
 }
 
-@keyframes reveal {
+@keyframes rise {
   from {
-    clip-path: inset(0 0 100% 0);
-    transform: translateY(0.18em);
+    opacity: 0;
+    transform: translateY(24px);
+    filter: blur(8px);
   }
   to {
-    clip-path: inset(0 0 -10% 0);
+    opacity: 1;
     transform: none;
+    filter: none;
   }
 }
 
-@keyframes nudge {
-  0%,
-  100% {
-    box-shadow: 0 2px 0 oklch(0.66 0.12 72), 0 0 0 0 oklch(0.8 0.12 78 / 0.6);
+@keyframes notif-0 {
+  0% {
+    opacity: 0;
+    transform: translateY(14px) scale(0.97);
   }
+  4%,
+  86% {
+    opacity: 1;
+    transform: none;
+  }
+  93%,
+  100% {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.98);
+  }
+}
+
+@keyframes notif-1 {
+  0%,
+  11% {
+    opacity: 0;
+    transform: translateY(14px) scale(0.97);
+  }
+  15%,
+  86% {
+    opacity: 1;
+    transform: none;
+  }
+  93%,
+  100% {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.98);
+  }
+}
+
+@keyframes notif-2 {
+  0%,
+  22% {
+    opacity: 0;
+    transform: translateY(14px) scale(0.97);
+  }
+  26%,
+  86% {
+    opacity: 1;
+    transform: none;
+  }
+  93%,
+  100% {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.98);
+  }
+}
+
+@keyframes notif-3 {
+  0%,
+  33% {
+    opacity: 0;
+    transform: translateY(14px) scale(0.97);
+  }
+  37%,
+  86% {
+    opacity: 1;
+    transform: none;
+  }
+  93%,
+  100% {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.98);
+  }
+}
+
+@keyframes notif-4 {
+  0%,
+  44% {
+    opacity: 0;
+    transform: translateY(14px) scale(0.97);
+  }
+  48%,
+  86% {
+    opacity: 1;
+    transform: none;
+  }
+  93%,
+  100% {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.98);
+  }
+}
+
+@keyframes drift-a {
+  to {
+    transform: translate(14vmax, 8vmax) scale(1.15);
+  }
+}
+
+@keyframes drift-b {
+  to {
+    transform: translate(-12vmax, 10vmax) scale(0.9);
+  }
+}
+
+@keyframes drift-c {
+  to {
+    transform: translate(-8vmax, -6vmax) scale(1.2);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spin-angle {
+  to {
+    --angle: 360deg;
+  }
+}
+
+@keyframes ping {
+  75%,
+  100% {
+    transform: scale(2.6);
+    opacity: 0;
+  }
+}
+
+@keyframes caret {
   50% {
-    box-shadow: 0 2px 0 oklch(0.66 0.12 72), 0 0 0 7px oklch(0.8 0.12 78 / 0);
+    opacity: 0;
+  }
+}
+
+@keyframes pin-pulse {
+  from {
+    transform: scale(0.75);
+    opacity: 0.9;
+  }
+  to {
+    transform: scale(1.7);
+    opacity: 0;
+  }
+}
+
+@keyframes route-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* One full dash period per loop, so the moving light never jumps. */
+@keyframes route-flow {
+  to {
+    stroke-dashoffset: -40;
+  }
+}
+
+@keyframes route-flow-dots {
+  to {
+    stroke-dashoffset: -24;
   }
 }
 
@@ -501,31 +961,8 @@ body {
   }
 }
 
-@keyframes caret {
-  50% {
-    opacity: 0;
-  }
-}
-
-@keyframes pin-pulse {
-  from {
-    transform: scale(0.7);
-    opacity: 0.9;
-  }
-  to {
-    transform: scale(1.45);
-    opacity: 0;
-  }
-}
-
-@keyframes route-draw {
-  to {
-    stroke-dashoffset: 0;
-  }
-}
-
 .animate-ticket-in {
-  animation: ticket-in 380ms var(--ease-enter) both;
+  animation: ticket-in 420ms var(--ease-enter) both;
 }
 
 .animate-chip-in {
@@ -534,11 +971,11 @@ body {
 
 .animate-grow-x {
   transform-origin: left;
-  animation: grow-x 700ms var(--ease-enter) both;
+  animation: grow-x 900ms var(--ease-enter) both;
 }
 
 .animate-sheet-in {
-  animation: sheet-in 320ms var(--ease-enter) both;
+  animation: sheet-in 360ms var(--ease-enter) both;
 }
 
 .animate-fade-in {
@@ -546,15 +983,11 @@ body {
 }
 
 .animate-toast-in {
-  animation: toast-in 300ms var(--ease-enter) both;
+  animation: toast-in 340ms var(--ease-enter) both;
 }
 
-.animate-reveal {
-  animation: reveal 900ms var(--ease-enter) both;
-}
-
-.animate-nudge {
-  animation: nudge 2.2s var(--ease-move) infinite;
+.animate-rise {
+  animation: rise 900ms var(--ease-enter) both;
 }
 
 .animate-bob {
@@ -573,4 +1006,10 @@ body {
   animation-duration: 0.01ms !important;
   animation-iteration-count: 1 !important;
   transition-duration: 0.01ms !important;
+}
+
+/* In calm mode the looping preview shows every step at once instead of cycling. */
+:root[data-motion="calm"] .notif {
+  opacity: 1;
+  animation: none !important;
 }

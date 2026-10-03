@@ -104,12 +104,16 @@ export function AreaPicker({ areaName, onChange }: Props) {
   }
 
   return (
-    <section aria-label="Choose an area" className="rounded-[16px] border-[1.5px] border-line bg-paper px-4 py-3">
-      <p className="font-semibold">Try it in your own town</p>
-      <p className="text-xs text-ink-soft">
-        Now showing <strong className="text-ink">{areaName}</strong>
-      </p>
-      <form onSubmit={handleSearch} role="search" className="mt-3 flex items-center gap-2">
+    <section aria-label="Choose an area" className="card spot p-4">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <p className="font-semibold tracking-tight">Try it in your own town</p>
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-mint/10 px-2.5 py-0.5 text-xs font-medium text-mint ring-1 ring-inset ring-mint/30">
+          <Icon name="pin" className="h-3 w-3" />
+          {areaName}
+        </span>
+      </div>
+      <form onSubmit={handleSearch} role="search" className="field mt-3 flex items-center gap-2 py-1 pl-3 pr-1">
+        <Icon name="search" className="h-4 w-4 shrink-0 text-faint" />
         <label htmlFor="area-search" className="sr-only">
           City or address
         </label>
@@ -119,34 +123,34 @@ export function AreaPicker({ areaName, onChange }: Props) {
           onChange={(event) => setQuery(event.target.value)}
           placeholder="Any city or address, like Austin, TX"
           maxLength={120}
-          className="field min-w-0 flex-1 px-3 py-2"
+          className="min-w-0 flex-1 bg-transparent py-1.5 text-fg outline-none placeholder:text-faint"
         />
-        <button type="submit" disabled={isBusy} className="btn btn-ink shrink-0">
+        <button type="submit" disabled={isBusy} className="btn btn-light shrink-0 !px-3.5 !py-1.5 text-sm">
           {isBusy ? 'Moving…' : 'Show it here'}
         </button>
       </form>
-      <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
+      <div className="mt-2.5 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
         <button
           type="button"
           onClick={handleUseLocation}
           disabled={isBusy}
-          className="inline-flex items-center gap-1.5 font-semibold text-dusk underline-offset-4 hover:underline disabled:opacity-60"
+          className="inline-flex items-center gap-1.5 font-medium text-cyan transition-colors hover:text-fg disabled:opacity-60"
         >
           <Icon name="locate" className="h-4 w-4" />
           Use my location
         </button>
         {areaName !== DEFAULT_NETWORK.areaName && (
-          <button type="button" onClick={handleBackToDemo} disabled={isBusy} className="text-ink-soft underline-offset-4 hover:text-ink hover:underline">
+          <button type="button" onClick={handleBackToDemo} disabled={isBusy} className="text-muted transition-colors hover:text-fg">
             Back to Tri-Valley
           </button>
         )}
       </div>
       {status && (
-        <p role="status" className={`w-full text-sm ${status.isError ? 'font-semibold text-tomato' : 'text-ink-soft'}`}>
+        <p role="status" className={`mt-2 w-full text-sm ${status.isError ? 'font-medium text-red' : 'text-muted'}`}>
           {status.text}
         </p>
       )}
-      <p className="mt-2 w-full text-[11px] text-ink-soft">
+      <p className="mt-2 w-full text-[11px] leading-relaxed text-faint">
         Place search by OpenStreetMap Nominatim. Streets and routes by OSRM. Your location is only used to center the map and is never saved.
       </p>
     </section>

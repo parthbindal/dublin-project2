@@ -3,7 +3,7 @@
 ## Before judging starts
 
 - In the `secondserve` folder, run `npm run dev` and open http://localhost:3000. Scroll back to the top.
-- Check that the **Motion** button in the top bar says **full**. This laptop asks for less motion, so the page starts in calm mode until you switch it.
+- Check that the **Motion** button in the top-right corner says **full**. This laptop asks for less motion, so the page starts in calm mode until you switch it.
 - Post one test listing to check that the AI works on the venue Wi-Fi. If the post is marked "Read without AI", the backup reader took over, and the demo still works.
 - Record a 60-second backup video in case anything fails.
 
@@ -22,7 +22,7 @@
 
 **1:00 The live evening (50 seconds).** Press **Play the evening** at 4×.
 
-- "Here's a whole Saturday evening. Each red pin is a business with extra food, each green pin is a food bank, and the yellow pins are volunteer drivers on real roads."
+- "Here's a whole Saturday evening. Each orange pin is a business with extra food, each green pin is a food bank, and the yellow pins are volunteer drivers. The glowing blue lines are deliveries moving on real roads."
 - Click a ticket. "Every match explains itself: distance, room, what they asked for. Look who was ruled out and why: no fridge, can't take hot meals, a nut-free program."
 - "California's SB 1383 already requires big grocery stores, distributors and large restaurants to arrange for their extra edible food to be recovered and to keep records. That's this button: Donation records."
 
