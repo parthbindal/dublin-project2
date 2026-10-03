@@ -36,7 +36,7 @@ The hard part is coordination. A youth center with no fridge can't take yogurt. 
    - Our own rule: perishable trips longer than 30 minutes need a cooler. That keeps deliveries well inside the USDA's limit of 2 hours out of refrigeration (1 hour above 90°F) ([USDA FSIS](https://www.fsis.usda.gov/food-safety/safe-food-handling-and-preparation/food-safety-basics/danger-zone-40f-140f)).
 4. **Count what matters.** It counts pounds delivered, meals (Feeding America counts about 1.2 pounds of food as one meal, [source](https://www.feedingamerica.org/ways-to-give/faq/about-our-claims)), food on the road, and food that didn't make it in time. A one-click spreadsheet of donation records covers the per-donation details SB 1383 asks for.
 5. **Predict extra food.** From past posts, SecondServe learns patterns like "Golden Crust usually has about 37 lbs of bread around 5:50 PM on Saturdays (8 of the last 8)", so food banks can get ready. These are labeled as predictions, not promises.
-6. **Works anywhere.** Search any city or address, or use your location. The demo network moves there and lands on real streets.
+6. **Works anywhere, with your own business.** Search any city or address, or use your location, and the demo network moves there onto real streets. In "Share extra food", choose "Add your own business", type its name and address, and it joins the evening and gets matched like any other.
 
 ## Try the demo
 
@@ -65,7 +65,7 @@ All businesses, food programs and volunteers are **made-up sample data**. The ma
   - Searches are remembered so they aren't repeated.
   - There is no search-as-you-type.
 - **Security:** the AI key stays on the server and is never sent to the browser.
-- **Stack:** Next.js 16, React 19, TypeScript, Tailwind CSS, Leaflet, Zod and Vitest (67 tests).
+- **Stack:** Next.js 16, React 19, TypeScript, Tailwind CSS, Leaflet, Zod and Vitest (68 tests).
 
 ## Run it yourself
 
@@ -86,7 +86,7 @@ Then:
 
 ```bash
 npm run dev     # http://localhost:3000
-npm test        # 67 unit tests
+npm test        # 68 unit tests
 ```
 
 Without `.env.local` everything still works, and posts are read by the built-in reader instead of AI.

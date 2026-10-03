@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { computeImpact } from './impact';
 import { DEMO_WEEKDAY, SCENARIO, SIM_END, SIM_START } from './sampleData';
-import { advanceTo, createInitialState, postListing, simulateUntil } from './simulation';
+import { addDonor, advanceTo, createInitialState, postListing, simulateUntil } from './simulation';
 
 const bakeryPost = SCENARIO[0];
 
@@ -48,6 +48,18 @@ describe('advanceTo', () => {
     const later = advanceTo(posted, 19 * 60 + 1);
     expect(later.listings[0].status).toBe('expired');
     expect(later.events[0].kind).toBe('expire');
+  });
+});
+
+describe('addDonor', () => {
+  it("adds a visitor's own business, and its food gets matched like any other", () => {
+    const start = createInitialState(DEMO_WEEKDAY, SIM_START);
+    const own = { id: 'd-own', name: "Rosa's Panaderia", kind: 'bakery' as const, city: 'Dublin', location: { lat: 37.705, lng: -121.925 } };
+    const withOwn = addDonor(start, own);
+    expect(withOwn.donors).toHaveLength(start.donors.length + 1);
+    expect(addDonor(withOwn, own)).toBe(withOwn);
+    const posted = postListing(withOwn, { id: 'mine', donorId: 'd-own', draft: bakeryPost.draft, source: 'ai' });
+    expect(posted.listings[0].status).toBe('matched');
   });
 });
 

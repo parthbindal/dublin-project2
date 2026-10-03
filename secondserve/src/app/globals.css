@@ -1,19 +1,21 @@
 @import "tailwindcss";
 
-/* Warm palette built in OKLCH: cream paper, brown ink, terracotta, honey and sage. */
+/* Bright, fresh-market palette built in OKLCH: tangerine, sunshine, leaf green and sky blue
+   on clean cream, with deep navy ink for crisp contrast. Token names are kept from v1. */
 :root {
-  --paper: oklch(0.975 0.012 82);
-  --linen: oklch(0.945 0.022 78);
-  --ink: oklch(0.29 0.03 52);
-  --ink-soft: oklch(0.49 0.03 58);
-  --line: oklch(0.875 0.025 75);
-  --terracotta: oklch(0.6 0.135 40);
-  --terracotta-deep: oklch(0.5 0.13 38);
-  --honey: oklch(0.8 0.12 78);
-  --sage: oklch(0.62 0.075 145);
-  --sage-deep: oklch(0.47 0.07 148);
-  --dusk: oklch(0.52 0.07 250);
-  --plum: oklch(0.48 0.09 340);
+  --paper: oklch(0.985 0.01 90);
+  --linen: oklch(0.96 0.03 88);
+  --ink: oklch(0.25 0.045 270);
+  --ink-soft: oklch(0.47 0.035 270);
+  --line: oklch(0.89 0.02 90);
+  --terracotta: oklch(0.68 0.19 45);
+  --terracotta-deep: oklch(0.54 0.18 40);
+  --honey: oklch(0.87 0.16 90);
+  --sage: oklch(0.7 0.17 150);
+  --sage-deep: oklch(0.5 0.13 155);
+  --dusk: oklch(0.6 0.16 250);
+  --plum: oklch(0.6 0.2 355);
+  --sky: oklch(0.93 0.045 225);
   /* Motion: entrances ease out, exits ease in, moves ease in and out. */
   --ease-enter: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-exit: cubic-bezier(0.4, 0, 1, 1);
@@ -49,8 +51,6 @@ html {
 
 body {
   background-color: var(--paper);
-  /* A whisper of paper grain. */
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.35 0 0 0 0 0.25 0 0 0 0 0.15 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   color: var(--ink);
   font-family: var(--font-instrument), system-ui, sans-serif;
 }
@@ -66,7 +66,13 @@ body {
 }
 
 .font-display {
-  font-variation-settings: "SOFT" 80, "WONK" 1;
+  font-variation-settings: "SOFT" 40, "WONK" 0;
+}
+
+/* A sunshine marker stroke behind a highlighted word. */
+.marker {
+  background: linear-gradient(transparent 58%, var(--honey) 58%, var(--honey) 92%, transparent 92%);
+  padding: 0 0.08em;
 }
 
 .eyebrow {
@@ -82,8 +88,8 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
-  border-radius: 10px;
-  padding: 0.55rem 1rem;
+  border-radius: 999px;
+  padding: 0.55rem 1.1rem;
   font-weight: 600;
   line-height: 1.2;
   transition:
@@ -134,7 +140,7 @@ body {
 }
 
 .field {
-  border-radius: 8px;
+  border-radius: 12px;
   border: 1.5px solid var(--line);
   background: var(--paper);
   transition: border-color 160ms var(--ease-move);
@@ -149,7 +155,7 @@ body {
 .ticket {
   position: relative;
   border: 1.5px solid var(--line);
-  border-radius: 4px;
+  border-radius: 12px;
   background: var(--paper);
   transition:
     border-color 160ms var(--ease-move),
@@ -305,9 +311,9 @@ body {
   font-family: inherit;
 }
 
-/* Soften OpenStreetMap's bright colors so the map sits in the warm palette. */
+/* Calm OpenStreetMap's colors a little so the pins and routes stand out. */
 .leaflet-tile-pane {
-  filter: sepia(0.22) saturate(0.6) brightness(1.03) contrast(0.95);
+  filter: saturate(0.7) brightness(1.04);
 }
 
 .leaflet-tooltip {

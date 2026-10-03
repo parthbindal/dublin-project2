@@ -5,7 +5,7 @@ import { formatClock, parseHHMM, round1, summarizeItems } from './format';
 import { planMatch } from './matching';
 import { DEFAULT_NETWORK, type Network } from './relocate';
 import type { ScenarioPost } from './sampleData';
-import type { AppState, DraftSource, EventKind, FeedEvent, Listing, ListingDraft } from './types';
+import type { AppState, Donor, DraftSource, EventKind, FeedEvent, Listing, ListingDraft } from './types';
 
 const MAX_EVENTS = 60;
 export const DEFAULT_PICKUP_WINDOW_MIN = 120;
@@ -22,6 +22,12 @@ export function createInitialState(weekday: number, now: number, network: Networ
     events: [],
     nextId: 1,
   };
+}
+
+/** Adds a business (for example, one a visitor typed in) so it can share food tonight. */
+export function addDonor(state: AppState, donor: Donor): AppState {
+  if (state.donors.some((d) => d.id === donor.id)) return state;
+  return { ...state, donors: [...state.donors, donor] };
 }
 
 export function logEvent(state: AppState, kind: EventKind, text: string): AppState {

@@ -6,8 +6,8 @@ import { computeImpact, toComplianceCsv } from '@/lib/impact';
 import { predictSurplus } from '@/lib/prediction';
 import { DEFAULT_NETWORK, type Network } from '@/lib/relocate';
 import { DEMO_WEEKDAY, HISTORY, HISTORY_WEEKS, SCENARIO, SIM_END, SIM_START } from '@/lib/sampleData';
-import { createInitialState, logEvent, postListing, simulateUntil, type NewListingInput } from '@/lib/simulation';
-import type { AppState } from '@/lib/types';
+import { addDonor, createInitialState, logEvent, postListing, simulateUntil, type NewListingInput } from '@/lib/simulation';
+import type { AppState, Donor } from '@/lib/types';
 import { ActivityLog } from './ActivityLog';
 import { AreaPicker } from './AreaPicker';
 import { ControlBar } from './Header';
@@ -58,7 +58,7 @@ function Masthead({ onShare }: { onShare: () => void }) {
       </div>
       <div className="grid gap-8 pb-4 pt-12 md:grid-cols-[1.5fr_1fr] md:items-end md:pt-20">
         <h1 className="animate-reveal font-display text-[clamp(2.7rem,7.4vw,6.4rem)] font-semibold leading-[0.93] tracking-[-0.02em]">
-          Good food deserves a <span className="italic text-terracotta">second</span> serving.
+          Good food deserves a <span className="marker italic text-terracotta-deep">second</span> serving.
         </h1>
         <div className="max-w-[46ch]">
           <p className="text-lg leading-relaxed">
@@ -88,7 +88,7 @@ function Masthead({ onShare }: { onShare: () => void }) {
 function MapLegend() {
   const dot = 'inline-block h-3 w-3 rounded-full border-[1.5px] border-paper shadow-[0_0_0_1px_var(--ink)]';
   return (
-    <div className="pointer-events-none absolute bottom-3 left-3 z-[500] space-y-1 rounded-[4px] border-[1.5px] border-ink bg-paper px-3 py-2 text-xs">
+    <div className="pointer-events-none absolute bottom-3 left-3 z-[500] space-y-1 rounded-[10px] border-[1.5px] border-ink bg-paper px-3 py-2 text-xs">
       <div className="flex items-center gap-2"><span className={`${dot} bg-terracotta`} />Business with extra food</div>
       <div className="flex items-center gap-2"><span className={`${dot} bg-sage-deep`} />Food bank or shelter</div>
       <div className="flex items-center gap-2"><span className={`${dot} bg-honey`} />Volunteer driver</div>
@@ -165,9 +165,13 @@ export default function Dashboard() {
   const selected = state.listings.find((l) => l.id === selectedId) ?? null;
   const shown = selected ?? state.listings[0] ?? null;
 
-  const handlePost = useCallback((input: NewListingInput) => {
+  const handlePost = useCallback((input: NewListingInput, newDonor?: Donor) => {
     const id = `u${Date.now().toString(36)}`;
-    setState((prev) => postListing(prev, { ...input, id }));
+    if (newDonor) {
+      // Keep the visitor's business on the map even after "Start over".
+      setNetwork((prev) => ({ ...prev, donors: [...prev.donors, newDonor] }));
+    }
+    setState((prev) => postListing(newDonor ? addDonor(prev, newDonor) : prev, { ...input, id }));
     setSelectedId(id);
     setIsPosting(false);
   }, []);
@@ -196,8 +200,8 @@ export default function Dashboard() {
         <div className="grid gap-6 pb-6 pt-10 md:grid-cols-[1.2fr_1fr] md:items-end">
           <div>
             <p className="eyebrow">A whole evening, live</p>
-            <h2 id="live-heading" className="mt-2 font-display text-[clamp(2rem,4.6vw,3.7rem)] font-semibold leading-none">
-              Tonight in {state.areaName}
+            <h2 id="live-heading" className="mt-2 font-display text-balance text-[clamp(1.9rem,3.8vw,3.2rem)] font-semibold leading-[1.05]">
+              Tonight in <span className="text-terracotta-deep">{state.areaName}</span>
             </h2>
             <p className="mt-3 max-w-[54ch] leading-relaxed text-ink-soft">
               Six local food businesses, five food programs and three volunteer drivers. Press play and watch good food find its way to people, one post at a time.
@@ -225,7 +229,7 @@ export default function Dashboard() {
           )}
           <ImpactStrip impact={impact} />
           <div className="grid gap-5 lg:grid-cols-[minmax(0,1.6fr)_minmax(340px,1fr)]">
-            <section aria-label="Map" className="relative h-[480px] overflow-hidden rounded-[6px] border-[1.5px] border-ink lg:h-[580px]">
+            <section aria-label="Map" className="relative h-[480px] overflow-hidden rounded-[16px] border-[1.5px] border-ink lg:h-[580px]">
               <MapView state={state} selectedId={shown?.id ?? null} onSelect={setSelectedId} />
               <MapLegend />
             </section>

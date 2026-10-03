@@ -33,6 +33,8 @@ const searchCache = new Map<string, FoundPlace | null>();
 export interface FoundPlace {
   center: LatLng;
   areaName: string;
+  /** A short readable address, like "123 Main Street, Dublin, California". */
+  label: string;
 }
 
 const AddressSchema = z
@@ -69,7 +71,8 @@ function toFoundPlace(place: NominatimPlace): FoundPlace | null {
   const lat = Number(place.lat);
   const lng = Number(place.lon);
   if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
-  return { center: { lat, lng }, areaName: toAreaName(place) };
+  const label = place.display_name.split(',').slice(0, 3).map((part) => part.trim()).join(', ');
+  return { center: { lat, lng }, areaName: toAreaName(place), label };
 }
 
 export function parseNominatimSearch(data: unknown): FoundPlace | null {
@@ -114,10 +117,18 @@ async function getJson(url: string, signal?: AbortSignal): Promise<unknown> {
 
 const lonLat = (p: LatLng) => `${p.lng.toFixed(5)},${p.lat.toFixed(5)}`;
 
-export async function searchPlace(query: string, signal?: AbortSignal): Promise<FoundPlace | null> {
-  const cacheKey = query.trim().toLowerCase();
+const NEAR_BOX_DEG = 0.5;
+
+/** Finds a place by name or address. `near` prefers results around that point (without excluding others). */
+export async function searchPlace(query: string, signal?: AbortSignal, near?: LatLng): Promise<FoundPlace | null> {
+  const cacheKey = `${query.trim().toLowerCase()}|${near ? `${near.lat.toFixed(1)},${near.lng.toFixed(1)}` : ''}`;
   if (searchCache.has(cacheKey)) return searchCache.get(cacheKey) ?? null;
   const params = new URLSearchParams({ q: query, format: 'jsonv2', limit: '1', addressdetails: '1', 'accept-language': 'en' });
+  if (near) {
+    const box = [near.lng - NEAR_BOX_DEG, near.lat + NEAR_BOX_DEG, near.lng + NEAR_BOX_DEG, near.lat - NEAR_BOX_DEG];
+    params.set('viewbox', box.map((n) => n.toFixed(4)).join(','));
+    params.set('bounded', '0');
+  }
   const found = parseNominatimSearch(await nominatimQueue(() => getJson(`${NOMINATIM}/search?${params}`, signal)));
   searchCache.set(cacheKey, found);
   return found;

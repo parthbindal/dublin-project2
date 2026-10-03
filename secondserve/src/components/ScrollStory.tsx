@@ -56,8 +56,8 @@ function Bakery() {
       <text x="100" y="22" textAnchor="middle" fill="var(--paper)" fontSize="14" fontWeight="700" letterSpacing="1.5">
         GOLDEN CRUST
       </text>
-      <rect x="18" y="94" width="98" height="70" fill="oklch(0.95 0.045 85)" stroke="var(--ink)" strokeWidth="3" />
-      <g className="story-loaves-out" stroke="var(--ink)" strokeWidth="2" fill="oklch(0.74 0.11 65)">
+      <rect x="18" y="94" width="98" height="70" fill="oklch(0.95 0.07 92)" stroke="var(--ink)" strokeWidth="3" />
+      <g className="story-loaves-out" stroke="var(--ink)" strokeWidth="2" fill="oklch(0.77 0.14 70)">
         {[
           [44, 150],
           [72, 150],
@@ -86,7 +86,7 @@ function YouthCenter() {
           <rect className="story-window-light" x={x + 1.5} y="95.5" width="47" height="37" fill="var(--honey)" />
         </g>
       ))}
-      <g className="story-loaves-in" stroke="var(--ink)" strokeWidth="2" fill="oklch(0.74 0.11 65)">
+      <g className="story-loaves-in" stroke="var(--ink)" strokeWidth="2" fill="oklch(0.77 0.14 70)">
         <ellipse cx="40" cy="124" rx="9" ry="5" />
         <ellipse cx="56" cy="124" rx="9" ry="5" />
         <ellipse cx="146" cy="124" rx="9" ry="5" />
@@ -117,12 +117,12 @@ function Van() {
 function Scenery({ routeRef }: { routeRef: RefObject<SVGPathElement | null> }) {
   return (
     <>
-      <rect width="1200" height="560" fill="var(--linen)" />
-      <rect className="story-dusk" width="1200" height="560" fill="oklch(0.62 0.07 330)" />
+      <rect width="1200" height="560" fill="var(--sky)" />
+      <rect className="story-dusk" width="1200" height="560" fill="oklch(0.72 0.15 25)" />
       <circle className="story-sun" cx="930" cy="150" r="58" fill="var(--honey)" />
-      <path d="M0 330 C 180 280, 320 300, 460 320 S 760 270, 900 300 S 1120 290, 1200 300 V 560 H 0 Z" fill="oklch(0.9 0.04 125)" />
-      <path d="M0 410 C 220 380, 420 400, 640 395 S 1000 380, 1200 400 V 560 H 0 Z" fill="oklch(0.94 0.03 95)" />
-      <path d={ROAD} stroke="oklch(0.83 0.02 70)" strokeWidth="30" fill="none" strokeLinecap="round" />
+      <path d="M0 330 C 180 280, 320 300, 460 320 S 760 270, 900 300 S 1120 290, 1200 300 V 560 H 0 Z" fill="oklch(0.85 0.11 140)" />
+      <path d="M0 410 C 220 380, 420 400, 640 395 S 1000 380, 1200 400 V 560 H 0 Z" fill="oklch(0.93 0.07 110)" />
+      <path d={ROAD} stroke="oklch(0.78 0.015 260)" strokeWidth="30" fill="none" strokeLinecap="round" />
       <path d={ROAD} stroke="var(--paper)" strokeWidth="2.5" strokeDasharray="14 14" fill="none" />
       <path ref={routeRef} d={ROAD} stroke="var(--terracotta)" strokeWidth="6" fill="none" strokeLinecap="round" />
       {[
@@ -133,7 +133,7 @@ function Scenery({ routeRef }: { routeRef: RefObject<SVGPathElement | null> }) {
       ].map(([cx, cy, r]) => (
         <g key={cx}>
           <rect x={cx - 3} y={cy} width="6" height={r + 10} fill="var(--ink-soft)" />
-          <circle cx={cx} cy={cy} r={r} fill="oklch(0.66 0.08 145)" stroke="var(--ink)" strokeWidth="2.5" />
+          <circle cx={cx} cy={cy} r={r} fill="oklch(0.66 0.16 148)" stroke="var(--ink)" strokeWidth="2.5" />
         </g>
       ))}
     </>
@@ -250,7 +250,7 @@ export function ScrollStory() {
               </li>
             ))}
           </ol>
-          <div className="relative aspect-[1200/560] w-full overflow-hidden rounded-[6px] border-[1.5px] border-ink">
+          <div className="relative aspect-[1200/560] w-full overflow-hidden rounded-[16px] border-[1.5px] border-ink">
             <svg viewBox="0 0 1200 560" className="absolute inset-0 h-full w-full" aria-hidden="true">
               <Scenery routeRef={routeRef} />
               <Bakery />
@@ -259,7 +259,7 @@ export function ScrollStory() {
                 <Van />
               </g>
             </svg>
-            <div className="story-phone absolute left-[34%] top-[7%] w-[32%] min-w-[190px] rounded-[6px] border-[1.5px] border-ink bg-paper p-3 text-[clamp(0.62rem,1vw,0.85rem)]">
+            <div className="story-phone absolute left-[34%] top-[7%] w-[32%] min-w-[190px] rounded-[16px] border-[1.5px] border-ink bg-paper p-3 text-[clamp(0.62rem,1vw,0.85rem)]">
               <p className="eyebrow !text-[0.62rem]">Golden Crust Bakery</p>
               <p className="mt-1.5 rounded-[10px_10px_10px_2px] bg-linen px-2.5 py-1.5 leading-snug">
                 <span ref={typedRef} />
@@ -273,11 +273,11 @@ export function ScrollStory() {
                 ))}
               </ul>
             </div>
-            <div className="story-match absolute left-[58%] top-[10%] max-w-[30%] rounded-[6px] bg-ink px-3 py-2 text-[clamp(0.6rem,0.95vw,0.82rem)] text-paper">
+            <div className="story-match absolute left-[58%] top-[10%] max-w-[30%] rounded-[16px] bg-ink px-3 py-2 text-[clamp(0.6rem,0.95vw,0.82rem)] text-paper">
               <p className="font-semibold">Matched: Northside Youth Center</p>
               <p className="text-paper/75">Asked for bakery items · open until 7:00 PM</p>
             </div>
-            <div className="story-meals absolute right-[3%] top-[8%] rounded-[6px] bg-sage-deep px-3 py-2 text-paper">
+            <div className="story-meals absolute right-[3%] top-[8%] rounded-[16px] bg-sage-deep px-3 py-2 text-paper">
               <p className="font-display text-[clamp(1.4rem,3vw,2.6rem)] font-bold leading-none">
                 <span ref={mealsRef}>0</span> meals
               </p>

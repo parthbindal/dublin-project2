@@ -48,7 +48,7 @@ export function LiveFeed({ listings, donors, recipients, selectedId, onSelect }:
   return (
     <section
       aria-labelledby="feed-heading"
-      className="flex h-[480px] flex-col overflow-hidden rounded-[6px] border-[1.5px] border-ink bg-linen lg:h-[580px]"
+      className="flex h-[480px] flex-col overflow-hidden rounded-[16px] border-[1.5px] border-ink bg-linen lg:h-[580px]"
     >
       <div className="flex items-baseline justify-between border-b-[1.5px] border-ink bg-paper px-5 py-3">
         <h3 id="feed-heading" className="font-display text-xl font-semibold">
@@ -58,9 +58,15 @@ export function LiveFeed({ listings, donors, recipients, selectedId, onSelect }:
       </div>
       {listings.length === 0 ? (
         <div className="grid flex-1 place-items-center p-8 text-center text-sm leading-relaxed text-ink-soft">
-          <p className="max-w-[30ch]">
-            Nothing has been shared yet. Press <strong className="text-ink">Play the evening</strong> to watch a night unfold, or share some food yourself.
-          </p>
+          <div className="flex max-w-[32ch] flex-col items-center gap-3">
+            <span className="grid h-16 w-16 place-items-center rounded-full bg-honey text-ink">
+              <Icon name="basket" className="h-8 w-8" />
+            </span>
+            <p className="font-display text-lg font-semibold text-ink">The shelves are quiet, for now.</p>
+            <p>
+              Press <strong className="text-ink">Play the evening</strong> to watch a night unfold, or share some food from your own business.
+            </p>
+          </div>
         </div>
       ) : (
         <ol className="flex-1 space-y-3 overflow-y-auto px-5 py-4">

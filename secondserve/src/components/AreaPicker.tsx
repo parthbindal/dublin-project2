@@ -21,7 +21,7 @@ async function buildNetwork(place: FoundPlace): Promise<{ network: Network; isOn
   }
 }
 
-function currentPosition(): Promise<LatLng> {
+export function currentPosition(): Promise<LatLng> {
   return new Promise((resolve, reject) => {
     if (!('geolocation' in navigator)) {
       reject(new Error("This browser can't share its location. Type a city instead."));
@@ -104,12 +104,12 @@ export function AreaPicker({ areaName, onChange }: Props) {
   }
 
   return (
-    <section aria-label="Choose an area" className="rounded-[6px] border-[1.5px] border-line bg-paper px-4 py-3">
+    <section aria-label="Choose an area" className="rounded-[16px] border-[1.5px] border-line bg-paper px-4 py-3">
       <p className="font-semibold">Try it in your own town</p>
       <p className="text-xs text-ink-soft">
         Now showing <strong className="text-ink">{areaName}</strong>
       </p>
-      <form onSubmit={handleSearch} role="search" className="mt-2 flex flex-wrap items-center gap-2">
+      <form onSubmit={handleSearch} role="search" className="mt-3 flex items-center gap-2">
         <label htmlFor="area-search" className="sr-only">
           City or address
         </label>
@@ -119,21 +119,28 @@ export function AreaPicker({ areaName, onChange }: Props) {
           onChange={(event) => setQuery(event.target.value)}
           placeholder="Any city or address, like Austin, TX"
           maxLength={120}
-          className="field min-w-[200px] flex-1 px-3 py-2"
+          className="field min-w-0 flex-1 px-3 py-2"
         />
-        <button type="submit" disabled={isBusy} className="btn btn-ink">
+        <button type="submit" disabled={isBusy} className="btn btn-ink shrink-0">
           {isBusy ? 'Moving…' : 'Show it here'}
         </button>
-        <button type="button" onClick={handleUseLocation} disabled={isBusy} className="btn btn-quiet text-sm">
+      </form>
+      <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
+        <button
+          type="button"
+          onClick={handleUseLocation}
+          disabled={isBusy}
+          className="inline-flex items-center gap-1.5 font-semibold text-dusk underline-offset-4 hover:underline disabled:opacity-60"
+        >
           <Icon name="locate" className="h-4 w-4" />
           Use my location
         </button>
         {areaName !== DEFAULT_NETWORK.areaName && (
-          <button type="button" onClick={handleBackToDemo} disabled={isBusy} className="text-sm text-ink-soft underline-offset-4 hover:text-ink hover:underline">
+          <button type="button" onClick={handleBackToDemo} disabled={isBusy} className="text-ink-soft underline-offset-4 hover:text-ink hover:underline">
             Back to Tri-Valley
           </button>
         )}
-      </form>
+      </div>
       {status && (
         <p role="status" className={`w-full text-sm ${status.isError ? 'font-semibold text-tomato' : 'text-ink-soft'}`}>
           {status.text}

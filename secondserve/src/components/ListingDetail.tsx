@@ -33,7 +33,7 @@ function Timeline({ listing }: { listing: Listing }) {
       {timelineSteps(listing).map((step) => (
         <li
           key={step.label}
-          className={`rounded-[4px] border px-3 py-2 transition-colors duration-500 ${step.isDone ? 'border-leaf/40 bg-leaf/10' : 'border-line bg-cream/60'}`}
+          className={`rounded-[10px] border px-3 py-2 transition-colors duration-500 ${step.isDone ? 'border-leaf/40 bg-leaf/10' : 'border-line bg-cream/60'}`}
         >
           <div className="text-xs font-semibold text-ink-soft">
             {step.isDone ? '✓ ' : ''}
@@ -51,7 +51,7 @@ function FoodSummary({ listing }: { listing: Listing }) {
   return (
     <div>
       <h3 className="text-sm font-semibold uppercase tracking-wide text-ink-soft">The food</h3>
-      <ul className="mt-2 divide-y divide-line rounded-[4px] border border-line">
+      <ul className="mt-2 divide-y divide-line rounded-[10px] border border-line">
         {draft.items.map((item, index) => (
           <li key={`${item.name}-${index}`} className="flex items-center justify-between gap-3 px-3 py-2 text-sm">
             <span>
@@ -132,7 +132,7 @@ function MatchExplanation({ listing, recipients }: { listing: Listing; recipient
           <h4 className="mt-4 text-xs font-semibold uppercase tracking-wide text-ink-soft">Other places we checked</h4>
           <ul className="mt-1 space-y-1.5 text-sm">
             {others.map((candidate) => (
-              <li key={candidate.recipientId} className="rounded-[4px] bg-cream px-3 py-2">
+              <li key={candidate.recipientId} className="rounded-[10px] bg-cream px-3 py-2">
                 <div className="flex justify-between gap-2">
                   <span className="font-medium">{nameOf(candidate.recipientId)}</span>
                   <span className={`text-xs font-semibold ${candidate.eligible ? 'text-ink-soft' : 'text-tomato'}`}>

@@ -98,7 +98,7 @@ export function SourceBadge({ source }: { source: DraftSource }) {
 
 export function Tag({ children, isWarning = false }: { children: ReactNode; isWarning?: boolean }) {
   const tone = isWarning ? 'bg-terracotta/10 text-terracotta-deep' : 'bg-linen text-ink-soft';
-  return <span className={`inline-flex rounded-[4px] px-2 py-0.5 text-xs font-medium ${tone}`}>{children}</span>;
+  return <span className={`inline-flex rounded-[10px] px-2 py-0.5 text-xs font-medium ${tone}`}>{children}</span>;
 }
 
 export function dietLabel(dietary: Dietary): string {

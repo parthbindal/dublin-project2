@@ -33,6 +33,7 @@ describe('parseNominatimSearch', () => {
     expect(parseNominatimSearch(AUSTIN_SEARCH)).toEqual({
       center: { lat: 30.2711286, lng: -97.7436995 },
       areaName: 'Austin, Texas',
+      label: 'Austin, Travis County, Texas',
     });
   });
 

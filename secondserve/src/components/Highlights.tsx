@@ -15,7 +15,7 @@ export function Toasts({ events, now }: { events: FeedEvent[]; now: number }) {
   return (
     <div aria-live="polite" className="pointer-events-none fixed bottom-4 right-4 z-[1500] flex w-[min(92vw,340px)] flex-col gap-2">
       {recent.map((event) => (
-        <div key={event.id} className="animate-toast-in flex gap-3 rounded-[6px] border-[1.5px] border-ink bg-paper px-4 py-3 text-sm">
+        <div key={event.id} className="animate-toast-in flex gap-3 rounded-[16px] border-[1.5px] border-ink bg-paper px-4 py-3 text-sm">
           <span
             className={`grid h-6 w-6 shrink-0 place-items-center rounded-full ${event.kind === 'deliver' ? 'bg-sage-deep text-paper' : 'bg-terracotta text-paper'}`}
           >
@@ -38,7 +38,7 @@ type SummaryProps = {
 export function EveningSummary({ impact, areaName, onReplay, onExport }: SummaryProps) {
   const tripWord = impact.deliveries === 1 ? 'trip' : 'trips';
   return (
-    <section aria-label="Tonight's results" className="grid gap-4 rounded-[6px] bg-sage-deep px-6 py-6 text-paper md:grid-cols-[1fr_auto] md:items-end">
+    <section aria-label="Tonight's results" className="grid gap-4 rounded-[16px] bg-sage-deep px-6 py-6 text-paper md:grid-cols-[1fr_auto] md:items-end">
       <div>
         <p className="eyebrow !text-paper/75">That&apos;s a wrap for tonight</p>
         <h3 className="animate-reveal mt-2 font-display text-[clamp(1.6rem,3vw,2.6rem)] font-semibold leading-[1.05]">
