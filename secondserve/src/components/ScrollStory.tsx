@@ -45,21 +45,21 @@ const CAPTIONS = [
 const FIELDS = ['30 lbs', 'Room temperature', 'Vegan', 'Allergen: gluten', 'Pick up by 7:00 PM'];
 
 // Night-market palette for the illustration (fixed, so the scene looks the same everywhere).
-const BUILDING = 'oklch(0.23 0.006 95)';
-const BUILDING_EDGE = 'oklch(0.32 0.006 95)';
+const BUILDING = 'oklch(0.23 0.03 280)';
+const BUILDING_EDGE = 'oklch(0.32 0.04 280)';
 const LOAF = 'oklch(0.78 0.14 68)';
 const LOAF_EDGE = 'oklch(0.5 0.1 55)';
 const WARM_LIGHT = 'oklch(0.88 0.13 85)';
-const DOOR = 'oklch(0.18 0.006 95)';
-const SIGN = 'oklch(0.15 0.006 95)';
+const DOOR = 'oklch(0.18 0.03 280)';
+const SIGN = 'oklch(0.15 0.03 280)';
 
 function Defs() {
   return (
     <defs>
       <linearGradient id="story-sky" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0" stopColor="oklch(0.16 0.006 95)" />
-        <stop offset="0.6" stopColor="oklch(0.25 0.03 60)" />
-        <stop offset="1" stopColor="oklch(0.55 0.12 55)" />
+        <stop offset="0" stopColor="oklch(0.17 0.05 285)" />
+        <stop offset="0.55" stopColor="oklch(0.3 0.12 330)" />
+        <stop offset="1" stopColor="oklch(0.62 0.17 40)" />
       </linearGradient>
       <linearGradient id="story-route" x1="214" y1="0" x2="1000" y2="0" gradientUnits="userSpaceOnUse">
         <stop offset="0" stopColor="var(--orange)" />
@@ -67,8 +67,8 @@ function Defs() {
         <stop offset="1" stopColor="var(--mint)" />
       </linearGradient>
       <linearGradient id="story-awning" x1="0" y1="0" x2="1" y2="0">
-        <stop offset="0" stopColor="var(--lime)" />
-        <stop offset="1" stopColor="var(--lime)" />
+        <stop offset="0" stopColor="var(--orange)" />
+        <stop offset="1" stopColor="var(--pink)" />
       </linearGradient>
       <linearGradient id="story-beam" x1="0" y1="0" x2="1" y2="0">
         <stop offset="0" stopColor={WARM_LIGHT} stopOpacity="0.55" />
@@ -98,8 +98,8 @@ function Bakery() {
       {[22, 66, 110, 154].map((x) => (
         <path key={x} d={`M${x} 42 h22 l-2 32 h-18 z`} fill="oklch(1 0 0 / 0.18)" />
       ))}
-      <rect x="22" y="2" width="156" height="30" fill={SIGN} stroke="var(--lime)" strokeWidth="1.5" />
-      <text x="100" y="22" textAnchor="middle" fill="var(--lime)" fontSize="14" fontWeight="700" letterSpacing="2">
+      <rect x="22" y="2" width="156" height="30" rx="8" fill={SIGN} stroke="var(--orange)" strokeWidth="1.5" />
+      <text x="100" y="22" textAnchor="middle" fill="var(--orange)" fontSize="14" fontWeight="700" letterSpacing="2" filter="url(#story-glow)">
         GOLDEN CRUST
       </text>
       <rect x="18" y="94" width="98" height="70" rx="4" fill={WARM_LIGHT} opacity="0.9" filter="url(#story-glow)" />
@@ -123,7 +123,7 @@ function Bakery() {
 function YouthCenter() {
   return (
     <g transform="translate(930 250)">
-      <path d="M-12 72 L100 10 L212 72 Z" fill="oklch(0.27 0.01 95)" stroke="var(--fg)" strokeWidth="2" strokeLinejoin="round" />
+      <path d="M-12 72 L100 10 L212 72 Z" fill="oklch(0.3 0.06 165)" stroke="var(--mint)" strokeWidth="2" strokeLinejoin="round" />
       <path d="M100 60 c-6-7-17-3-17 5 0 8 17 16 17 16 s17-8 17-16 c0-8-11-12-17-5z" fill="var(--pink)" filter="url(#story-glow)" />
       <rect x="0" y="72" width="200" height="130" rx="4" fill={BUILDING} stroke={BUILDING_EDGE} strokeWidth="2" />
       {[22, 128].map((x) => (
@@ -138,8 +138,8 @@ function YouthCenter() {
         <ellipse cx="146" cy="124" rx="9" ry="5" />
         <ellipse cx="162" cy="124" rx="9" ry="5" />
       </g>
-      <rect x="10" y="150" width="114" height="24" fill={SIGN} stroke="var(--fg)" strokeWidth="1.5" />
-      <text x="67" y="167" textAnchor="middle" fill="var(--fg)" fontSize="11" fontWeight="700" letterSpacing="1.5">
+      <rect x="10" y="150" width="114" height="24" rx="6" fill={SIGN} stroke="var(--mint)" strokeWidth="1.5" />
+      <text x="67" y="167" textAnchor="middle" fill="var(--mint)" fontSize="11" fontWeight="700" letterSpacing="1.5" filter="url(#story-glow)">
         YOUTH CENTER
       </text>
       <rect x="132" y="140" width="44" height="62" rx="3" fill={DOOR} stroke={BUILDING_EDGE} strokeWidth="2" />
@@ -153,10 +153,10 @@ function Van() {
       <path d="M72 30 L150 14 L150 48 Z" fill="url(#story-beam)" />
       <path d="M2 10 H48 V40 H2 Z" fill="var(--yellow)" />
       <path d="M48 18 H62 L72 29 V40 H48 Z" fill="var(--yellow)" />
-      <path d="M52 21 H61 L67 28 H52 Z" fill="oklch(0.25 0.006 95)" />
+      <path d="M52 21 H61 L67 28 H52 Z" fill="oklch(0.25 0.04 280)" />
       <path d="M25 22 c-3-3-8-1-8 3 0 4 8 8 8 8 s8-4 8-8 c0-4-5-6-8-3z" fill="var(--pink)" />
-      <circle cx="16" cy="42" r="7" fill="oklch(0.14 0.006 95)" stroke="oklch(0.4 0.006 95)" strokeWidth="2" />
-      <circle cx="58" cy="42" r="7" fill="oklch(0.14 0.006 95)" stroke="oklch(0.4 0.006 95)" strokeWidth="2" />
+      <circle cx="16" cy="42" r="7" fill="oklch(0.14 0.02 280)" stroke="oklch(0.4 0.02 280)" strokeWidth="2" />
+      <circle cx="58" cy="42" r="7" fill="oklch(0.14 0.02 280)" stroke="oklch(0.4 0.02 280)" strokeWidth="2" />
     </g>
   );
 }
@@ -170,16 +170,16 @@ function Scenery({ routeRef }: { routeRef: RefObject<SVGPathElement | null> }) {
   return (
     <>
       <rect width="1200" height="560" fill="url(#story-sky)" />
-      <rect className="story-night" width="1200" height="560" fill="oklch(0.12 0.006 95)" />
+      <rect className="story-night" width="1200" height="560" fill="oklch(0.12 0.03 280)" />
       <g className="story-stars" fill="white">
         {STARS.map(([cx, cy, r]) => (
           <circle key={`${cx}-${cy}`} cx={cx} cy={cy} r={r} />
         ))}
       </g>
       <circle className="story-sun" cx="930" cy="190" r="90" fill="url(#story-sun)" />
-      <path d="M0 330 C 180 280, 320 300, 460 320 S 760 270, 900 300 S 1120 290, 1200 300 V 560 H 0 Z" fill="oklch(0.21 0.008 95)" />
-      <path d="M0 410 C 220 380, 420 400, 640 395 S 1000 380, 1200 400 V 560 H 0 Z" fill="oklch(0.17 0.005 95)" />
-      <path d={ROAD} stroke="oklch(0.24 0.006 95)" strokeWidth="30" fill="none" strokeLinecap="round" />
+      <path d="M0 330 C 180 280, 320 300, 460 320 S 760 270, 900 300 S 1120 290, 1200 300 V 560 H 0 Z" fill="oklch(0.2 0.045 290)" />
+      <path d="M0 410 C 220 380, 420 400, 640 395 S 1000 380, 1200 400 V 560 H 0 Z" fill="oklch(0.16 0.03 280)" />
+      <path d={ROAD} stroke="oklch(0.24 0.02 275)" strokeWidth="30" fill="none" strokeLinecap="round" />
       <path d={ROAD} stroke="oklch(1 0 0 / 0.18)" strokeWidth="2" strokeDasharray="14 14" fill="none" />
       <path ref={routeRef} d={ROAD} stroke="url(#story-route)" strokeWidth="6" fill="none" strokeLinecap="round" filter="url(#story-glow)" />
       {[
@@ -189,8 +189,8 @@ function Scenery({ routeRef }: { routeRef: RefObject<SVGPathElement | null> }) {
         [880, 384, 18],
       ].map(([cx, cy, r]) => (
         <g key={cx}>
-          <rect x={cx - 3} y={cy} width="6" height={r + 10} fill="oklch(0.22 0.006 95)" />
-          <circle cx={cx} cy={cy} r={r} fill="oklch(0.27 0.012 95)" />
+          <rect x={cx - 3} y={cy} width="6" height={r + 10} fill="oklch(0.22 0.03 280)" />
+          <circle cx={cx} cy={cy} r={r} fill="oklch(0.27 0.06 175)" />
         </g>
       ))}
     </>
@@ -300,14 +300,14 @@ export function ScrollStory() {
             {CAPTIONS.map((caption, index) => (
               <li key={caption.title} data-index={index} className="story-caption">
                 <p className="eyebrow">
-                  02 / {caption.time} <span className="text-lime">· {index + 1} of 4</span>
+                  {caption.time} <span className="text-orange">· {index + 1} of 4</span>
                 </p>
-                <h2 className="display mt-3 text-[clamp(1.9rem,3.3vw,3rem)] leading-[1.02]">{caption.title}</h2>
+                <h2 className="mt-3 text-[clamp(1.9rem,3.3vw,3rem)] font-semibold leading-[1.02] tracking-[-0.035em]">{caption.title}</h2>
                 <p className="mt-4 max-w-[38ch] text-[1.02rem] leading-relaxed text-muted">{caption.body}</p>
               </li>
             ))}
           </ol>
-          <div className="relative aspect-[1200/560] w-full overflow-hidden border border-line-strong">
+          <div className="relative aspect-[1200/560] w-full overflow-hidden rounded-[26px] border border-line-strong shadow-[0_40px_120px_-40px_oklch(0.73_0.2_8/0.55)]">
             <svg viewBox="0 0 1200 560" className="absolute inset-0 h-full w-full" aria-hidden="true">
               <Defs />
               <Scenery routeRef={routeRef} />
@@ -317,7 +317,7 @@ export function ScrollStory() {
                 <Van />
               </g>
             </svg>
-            <div className="story-phone story-card absolute left-[34%] top-[7%] w-[32%] min-w-[190px] p-3 text-[clamp(0.62rem,1vw,0.85rem)]">
+            <div className="story-phone story-card absolute left-[34%] top-[7%] w-[32%] min-w-[190px] rounded-[18px] p-3 text-[clamp(0.62rem,1vw,0.85rem)]">
               <p className="eyebrow !text-[0.6rem]">Golden Crust Bakery</p>
               <p className="mt-1.5 rounded-[12px_12px_12px_3px] bg-white/[0.07] px-2.5 py-1.5 leading-snug">
                 <span ref={typedRef} />
@@ -325,17 +325,17 @@ export function ScrollStory() {
               </p>
               <ul className="mt-2 flex flex-wrap gap-1">
                 {FIELDS.map((field) => (
-                  <li key={field} className="story-field bg-violet/15 px-2 py-0.5 font-semibold text-violet ring-1 ring-inset ring-violet/35">
+                  <li key={field} className="story-field rounded-full bg-violet/15 px-2 py-0.5 font-semibold text-violet ring-1 ring-inset ring-violet/35">
                     {field}
                   </li>
                 ))}
               </ul>
             </div>
-            <div className="story-match story-card absolute left-[58%] top-[10%] max-w-[30%] px-3 py-2 text-[clamp(0.6rem,0.95vw,0.82rem)] ring-1 ring-cyan/40">
+            <div className="story-match story-card absolute left-[58%] top-[10%] max-w-[30%] rounded-[16px] px-3 py-2 text-[clamp(0.6rem,0.95vw,0.82rem)] ring-1 ring-cyan/40">
               <p className="font-semibold text-cyan">Matched: Northside Youth Center</p>
               <p className="text-muted">Asked for bakery items · open until 7:00 PM</p>
             </div>
-            <div className="story-meals story-card absolute right-[3%] top-[8%] px-4 py-3 ring-1 ring-mint/40">
+            <div className="story-meals story-card absolute right-[3%] top-[8%] rounded-[18px] px-4 py-3 ring-1 ring-mint/40">
               <p className="text-fresh text-[clamp(1.5rem,3.2vw,2.8rem)] font-semibold leading-none tracking-[-0.04em]">
                 <span ref={mealsRef}>0</span> meals
               </p>
@@ -343,8 +343,8 @@ export function ScrollStory() {
             </div>
           </div>
         </div>
-        <div aria-hidden className="absolute right-3 top-1/2 h-40 w-[3px] -translate-y-1/2 overflow-hidden bg-white/10 md:right-5">
-          <div className="story-rail-fill h-full w-full origin-top bg-lime" />
+        <div aria-hidden className="absolute right-3 top-1/2 h-40 w-[3px] -translate-y-1/2 overflow-hidden rounded-full bg-white/10 md:right-5">
+          <div className="story-rail-fill h-full w-full origin-top bg-[image:linear-gradient(var(--orange),var(--pink),var(--violet))]" />
         </div>
       </div>
     </section>

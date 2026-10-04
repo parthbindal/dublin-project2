@@ -54,13 +54,13 @@ function DraftEditor({ result, now, onChange }: EditorProps) {
   const setLbs = (index: number, lbs: number) =>
     onChange({ items: draft.items.map((item, i) => (i === index ? { ...item, estimatedLbs: lbs } : item)) });
   return (
-    <div className="animate-sheet-in mt-5 bg-white/[0.03] p-4 ring-1 ring-inset ring-line">
+    <div className="animate-sheet-in mt-5 rounded-[18px] bg-white/[0.03] p-4 ring-1 ring-inset ring-line">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h3 className="font-semibold">Check the details</h3>
         <SourceBadge source={result.source} />
       </div>
       {result.note && <p className="mt-1 text-xs text-muted">{result.note}</p>}
-      <ul className="mt-3 divide-y divide-line overflow-hidden bg-white/[0.03] text-sm ring-1 ring-inset ring-line">
+      <ul className="mt-3 divide-y divide-line overflow-hidden rounded-[14px] bg-white/[0.03] text-sm ring-1 ring-inset ring-line">
         {draft.items.map((item, index) => (
           <li key={`${item.name}-${index}`} className="flex items-center justify-between gap-3 px-3 py-2">
             <span>
@@ -208,7 +208,7 @@ function NewBusinessFields({ value, near, onChange }: NewBusinessProps) {
   }
 
   return (
-    <div className="animate-sheet-in mt-3 grid gap-3 bg-white/[0.03] p-4 ring-1 ring-inset ring-line sm:grid-cols-2">
+    <div className="animate-sheet-in mt-3 grid gap-3 rounded-[18px] bg-white/[0.03] p-4 ring-1 ring-inset ring-line sm:grid-cols-2">
       <label className="text-sm font-semibold">
         Business name
         <input
@@ -366,7 +366,7 @@ export function PostSurplus({ donors, now, onClose, onPost }: Props) {
 
   return (
     <div
-      className="animate-fade-in fixed inset-0 z-[2000] grid place-items-center bg-bg/85 p-4"
+      className="animate-fade-in fixed inset-0 z-[2000] grid place-items-center bg-bg/70 p-4 backdrop-blur-md"
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) onClose();
       }}
@@ -375,16 +375,16 @@ export function PostSurplus({ donors, now, onClose, onPost }: Props) {
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
-        className="card animate-sheet-in max-h-[92vh] w-full max-w-2xl overflow-y-auto p-6"
+        className="card animate-sheet-in max-h-[92vh] w-full max-w-2xl overflow-y-auto !rounded-[26px] p-6 shadow-[0_40px_120px_-30px_oklch(0.73_0.17_295/0.45)]"
       >
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h2 id={titleId} className="display text-3xl">
+            <h2 id={titleId} className="text-2xl font-semibold tracking-[-0.03em]">
               Share extra food
             </h2>
             <p className="text-sm text-muted">Tell us what&apos;s left, the way you&apos;d text a friend. We&apos;ll turn it into a post a food bank can act on.</p>
           </div>
-          <button type="button" onClick={onClose} aria-label="Close" className=" px-2 text-2xl leading-none text-muted hover:text-fg">
+          <button type="button" onClick={onClose} aria-label="Close" className="rounded-full px-2 text-2xl leading-none text-muted hover:text-fg">
             ×
           </button>
         </div>
@@ -427,7 +427,7 @@ export function PostSurplus({ donors, now, onClose, onPost }: Props) {
               key={example.label}
               type="button"
               onClick={() => handleTextChange(example.text)}
-              className=" bg-white/[0.04] px-3 py-1 font-medium text-muted ring-1 ring-line-strong transition hover:bg-white/10 hover:text-fg"
+              className="rounded-full bg-white/[0.04] px-3 py-1 font-medium text-muted ring-1 ring-line-strong transition hover:bg-white/10 hover:text-fg"
             >
               Try: {example.label}
             </button>
@@ -445,7 +445,10 @@ export function PostSurplus({ donors, now, onClose, onPost }: Props) {
               Organizing…
             </span>
           ) : (
-            'Read it for me'
+            <>
+              <Icon name="sparkle" className="h-4 w-4" />
+              Read it for me
+            </>
           )}
         </button>
         {error && (

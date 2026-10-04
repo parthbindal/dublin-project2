@@ -70,27 +70,27 @@ export const STORAGE_LABEL: Record<Storage, string> = {
 };
 
 const STATUS_STYLE: Record<ListingStatus, { label: string; className: string }> = {
-  open: { label: 'Looking for a home', className: 'text-fg' },
-  matched: { label: 'Driver on the way', className: 'text-fg' },
-  'picked-up': { label: 'In the van', className: 'text-lime' },
-  delivered: { label: 'Delivered', className: 'text-lime' },
-  expired: { label: "Didn't make it", className: 'text-red' },
+  open: { label: 'Looking for a home', className: 'bg-orange/12 text-orange ring-orange/30' },
+  matched: { label: 'Driver on the way', className: 'bg-yellow/12 text-yellow ring-yellow/30' },
+  'picked-up': { label: 'In the van', className: 'bg-cyan/12 text-cyan ring-cyan/30' },
+  delivered: { label: 'Delivered', className: 'bg-mint/12 text-mint ring-mint/30' },
+  expired: { label: "Didn't make it", className: 'bg-white/5 text-muted ring-line-strong' },
 };
 
 const SOURCE_STYLE: Record<DraftSource, { label: string; className: string; isAi: boolean }> = {
-  ai: { label: 'Read by AI', className: 'text-fg ring-1 ring-inset ring-line-strong px-2 py-0.5', isAi: true },
-  builtin: { label: 'Read without AI', className: 'text-muted ring-1 ring-inset ring-line-strong px-2 py-0.5', isAi: false },
-  sample: { label: 'Demo post', className: 'text-muted ring-1 ring-inset ring-line-strong px-2 py-0.5', isAi: false },
+  ai: { label: 'Read by AI', className: 'bg-violet/12 text-violet ring-violet/35', isAi: true },
+  builtin: { label: 'Read without AI', className: 'bg-white/5 text-muted ring-line-strong', isAi: false },
+  sample: { label: 'Demo post', className: 'bg-white/5 text-muted ring-line-strong', isAi: false },
 };
 
-const CHIP = 'label inline-flex items-center gap-1.5 whitespace-nowrap !text-[0.72rem]';
+const CHIP = 'inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-0.5 text-xs font-semibold ring-1 ring-inset';
 
 /** The `key` replays a quick fade whenever the status changes. */
 export function StatusChip({ status }: { status: ListingStatus }) {
   const style = STATUS_STYLE[status];
   return (
     <span key={status} className={`${CHIP} animate-chip-in ${style.className}`}>
-      <span aria-hidden className="h-1.5 w-1.5 bg-current" />
+      <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-current shadow-[0_0_8px_currentColor]" />
       {style.label}
     </span>
   );
@@ -100,14 +100,15 @@ export function SourceBadge({ source }: { source: DraftSource }) {
   const style = SOURCE_STYLE[source];
   return (
     <span className={`${CHIP} ${style.className}`}>
+      {style.isAi && <Icon name="sparkle" className="h-3 w-3" />}
       {style.label}
     </span>
   );
 }
 
 export function Tag({ children, isWarning = false }: { children: ReactNode; isWarning?: boolean }) {
-  const tone = isWarning ? 'text-red ring-red/50' : 'text-muted ring-line-strong';
-  return <span className={`inline-flex px-2 py-0.5 text-xs font-medium ring-1 ring-inset ${tone}`}>{children}</span>;
+  const tone = isWarning ? 'bg-red/10 text-red ring-red/30' : 'bg-white/[0.04] text-muted ring-line';
+  return <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ring-1 ring-inset ${tone}`}>{children}</span>;
 }
 
 export function dietLabel(dietary: Dietary): string {
@@ -165,9 +166,9 @@ export function MotionToggle() {
       onClick={handleToggle}
       aria-pressed={!isCalm}
       title="Calm motion turns off animations, for anyone who prefers less movement on screen."
-      className="btn btn-glass label px-3 py-2 !text-[0.7rem]"
+      className="btn btn-glass !px-3 !py-1.5 text-xs"
     >
-      <span aria-hidden className={`h-1.5 w-1.5 ${isCalm ? 'bg-faint' : 'bg-lime'}`} />
+      <span aria-hidden className={`h-1.5 w-1.5 rounded-full ${isCalm ? 'bg-faint' : 'bg-mint shadow-[0_0_8px_var(--mint)]'}`} />
       Motion: {isCalm ? 'calm' : 'full'}
     </button>
   );

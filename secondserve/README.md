@@ -56,11 +56,11 @@ All businesses, food programs and volunteers are **made-up sample data**. The ma
 | Impact numbers and the donation-records spreadsheet | `src/lib/impact.ts` |
 | Moving the demo to any city, place search, road snapping | `src/lib/relocate.ts`, `src/lib/places.ts` |
 | Scroll story | `src/components/ScrollStory.tsx` |
-| Look and feel (Swiss-style dark theme, one signature color, pickup board, framed map) | `src/app/globals.css`, `src/components/Hero.tsx`, `src/components/MapOverlays.tsx` |
+| Look and feel (dark theme, glass panels, glowing map) | `src/app/globals.css`, `src/components/Hero.tsx`, `src/components/MapOverlays.tsx` |
 
 - **How the scroll story moves:** each frame it eases toward your scroll position, but a **speed limiter** caps it at 0.85 of the story per second, so a hard fling glides instead of jumping.
 - **Why it stays fast:** it only changes a few CSS values, one SVG transform and two text labels per frame, and it stops itself once it catches up.
-- **The map:** OpenStreetMap tiles turned dark with the same CSS filter OpenStreetMap uses for its own dark mode, desaturated to graphite so only the data is in color. Businesses are lime circles, food banks are white squares, and drivers are small rings, so the map reads by shape as well as color. A pulse moves along each route while food is on the way.
+- **The map:** OpenStreetMap tiles turned dark with the same CSS filter OpenStreetMap uses for its own dark mode, so neon pins and glowing routes stand out. Light flows along each route while food is on the way.
 - **Motion setting:** follows the device's "reduce motion" setting by default, and the **Motion** button switches between full and calm.
 - **Free map services, used within their rules:** OpenStreetMap tiles, Nominatim place search and OSRM routes.
   - Requests are queued at no more than 1 per second.

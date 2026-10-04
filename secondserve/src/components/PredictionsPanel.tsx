@@ -28,9 +28,14 @@ export function PredictionsPanel({ predictions, donors, weekday, onHeadsUp }: Pr
 
   return (
     <section aria-labelledby="predict-heading" className="card p-5">
-      <h3 id="predict-heading" className="label !text-fg">
-        Who usually has extra on {dayName}s
-      </h3>
+      <div className="flex items-center gap-2.5">
+        <span className="grid h-8 w-8 place-items-center rounded-[10px] bg-violet/12 text-violet ring-1 ring-inset ring-violet/30">
+          <Icon name="sparkle" className="h-4 w-4" />
+        </span>
+        <h3 id="predict-heading" className="font-semibold tracking-tight">
+          Who usually has extra on {dayName}s
+        </h3>
+      </div>
       <p className="mt-2 text-xs text-faint">
         Learned from the last {weeksTracked} {dayName}s of posts. A good guess, not a promise.
       </p>
@@ -47,10 +52,10 @@ export function PredictionsPanel({ predictions, donors, weekday, onHeadsUp }: Pr
                   <Icon name={DONOR_ICON[donor.kind]} className="h-4 w-4 shrink-0 text-orange" />
                   <span className="truncate">{donor.name}</span>
                 </span>
-                <span className="display text-xl text-lime">{percent}%</span>
+                <span className="text-brand font-mono text-lg font-semibold tabular-nums">{percent}%</span>
               </div>
-              <div className="mt-2 h-1.5 overflow-hidden bg-white/[0.06]">
-                <div className="animate-grow-x h-full bg-lime" style={{ width: `${percent}%` }} />
+              <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/[0.06]">
+                <div className="animate-grow-x h-full rounded-full bg-[image:var(--brand)]" style={{ width: `${percent}%` }} />
               </div>
               <p className="mt-2 text-sm text-muted">
                 Usually about {prediction.typicalLbs} lbs of {CATEGORY_LABEL[prediction.category]} around{' '}
