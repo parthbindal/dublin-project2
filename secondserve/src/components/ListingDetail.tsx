@@ -33,12 +33,12 @@ function Timeline({ listing }: { listing: Listing }) {
       {timelineSteps(listing).map((step) => (
         <li
           key={step.label}
-          className={`relative overflow-hidden rounded-[14px] px-3.5 py-2.5 ring-1 ring-inset transition-colors duration-500 ${
+          className={`relative overflow-hidden px-3.5 py-2.5 ring-1 ring-inset transition-colors duration-500 ${
             step.isDone ? 'bg-mint/10 ring-mint/35' : 'bg-white/[0.03] ring-line'
           }`}
         >
           <div className={`flex items-center gap-1.5 text-xs font-semibold ${step.isDone ? 'text-mint' : 'text-faint'}`}>
-            {step.isDone ? <Icon name="check" className="h-3.5 w-3.5" /> : <span className="h-1.5 w-1.5 rounded-full bg-current" />}
+            {step.isDone ? <Icon name="check" className="h-3.5 w-3.5" /> : <span className="h-1.5 w-1.5 bg-current" />}
             {step.label}
           </div>
           <div className="mt-0.5 font-mono text-sm tabular-nums">{step.time}</div>
@@ -53,7 +53,7 @@ function FoodSummary({ listing }: { listing: Listing }) {
   return (
     <div>
       <h3 className="eyebrow">The food</h3>
-      <ul className="mt-2.5 divide-y divide-line overflow-hidden rounded-[14px] bg-white/[0.03] ring-1 ring-inset ring-line">
+      <ul className="mt-2.5 divide-y divide-line overflow-hidden bg-white/[0.03] ring-1 ring-inset ring-line">
         {draft.items.map((item, index) => (
           <li key={`${item.name}-${index}`} className="flex items-center justify-between gap-3 px-3.5 py-2.5 text-sm">
             <span>
@@ -85,9 +85,9 @@ function ScoreBar({ score }: { score: number }) {
         <span className="text-muted">How good a fit</span>
         <span className="text-fresh font-mono text-base tabular-nums">{score} / 100</span>
       </div>
-      <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-white/[0.06]">
+      <div className="mt-1.5 h-2 overflow-hidden bg-white/[0.06]">
         <div
-          className="animate-grow-x h-full rounded-full bg-[image:var(--fresh)] shadow-[0_0_16px_var(--mint)]"
+          className="animate-grow-x h-full bg-lime"
           style={{ width: `${Math.min(100, score)}%` }}
         />
       </div>
@@ -116,7 +116,7 @@ function MatchExplanation({ listing, recipients }: { listing: Listing; recipient
         We compare distance, free space, what each place asked for, and time before it closes. Then we rule out any place that can&apos;t store the food safely or serve it to the people it feeds.
       </p>
       {match ? (
-        <div className="mt-3 rounded-[16px] bg-mint/[0.06] p-4 ring-1 ring-inset ring-mint/25">
+        <div className="mt-3 border-l-2 border-lime bg-white/[0.03] p-4">
           <ScoreBar key={listing.id} score={match.score} />
           <ul className="mt-3 space-y-1.5 text-sm">
             {match.reasons.map((reason) => (
@@ -135,7 +135,7 @@ function MatchExplanation({ listing, recipients }: { listing: Listing; recipient
           <h4 className="eyebrow mt-5">Other places we checked</h4>
           <ul className="mt-2 space-y-1.5 text-sm">
             {others.map((candidate) => (
-              <li key={candidate.recipientId} className="rounded-[12px] bg-white/[0.03] px-3.5 py-2.5 ring-1 ring-inset ring-line">
+              <li key={candidate.recipientId} className=" bg-white/[0.03] px-3.5 py-2.5 ring-1 ring-inset ring-line">
                 <div className="flex justify-between gap-2">
                   <span className="font-medium">{nameOf(candidate.recipientId)}</span>
                   <span className={`font-mono text-xs font-semibold ${candidate.eligible ? 'text-muted' : 'text-red'}`}>
@@ -167,10 +167,7 @@ export function ListingDetail({ listing, state, isFollowingLatest }: Props) {
     return (
       <section className="card grid min-h-[280px] place-items-center p-8 text-center">
         <div>
-          <span className="mx-auto grid h-12 w-12 place-items-center rounded-[14px] bg-cyan/12 text-cyan ring-1 ring-inset ring-cyan/30">
-            <Icon name="link" className="h-6 w-6" />
-          </span>
-          <h3 className="mt-4 text-xl font-semibold tracking-tight">Every match comes with reasons</h3>
+          <h3 className="display text-2xl">Every match comes with reasons</h3>
           <p className="mx-auto mt-2 max-w-md text-sm text-muted">
             When food is posted, you&apos;ll see where it goes, which places were ruled out and why, and which volunteer drives it over.
           </p>
@@ -188,7 +185,7 @@ export function ListingDetail({ listing, state, isFollowingLatest }: Props) {
           <p className="eyebrow">
             {isFollowingLatest ? 'Following the newest post' : 'Selected post'} · posted {formatClock(listing.postedAt)}
           </p>
-          <h3 id="detail-heading" className="mt-2 text-2xl font-semibold leading-tight tracking-[-0.03em]">
+          <h3 id="detail-heading" className="display mt-2 text-3xl leading-tight">
             {donor?.name ?? 'Unknown business'} <span className="text-brand">→</span> {destination}
           </h3>
           {donor && (

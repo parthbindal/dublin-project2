@@ -20,10 +20,10 @@ const ACTIVE = new Set<Listing['status']>(['matched', 'picked-up']);
 
 // Literal colors (not CSS variables) because Leaflet writes them into SVG attributes. They match globals.css.
 const ROUTE_COLOR = {
-  toPickup: 'oklch(0.92 0.16 100)',
-  delivering: 'oklch(0.84 0.13 212)',
-  delivered: 'oklch(0.86 0.16 162)',
-  light: 'oklch(0.99 0.02 212)',
+  toPickup: 'oklch(0.965 0.006 95)',
+  delivering: 'oklch(0.93 0.2 123)',
+  delivered: 'oklch(0.965 0.006 95)',
+  light: 'oklch(0.2 0.04 123)',
 };
 
 const toTuple = (point: LatLng): Tuple => [point.lat, point.lng];
@@ -108,8 +108,8 @@ function ActiveRoute({ listing, match, donor, recipient, driver, now, isSelected
           pathOptions={{ color: ROUTE_COLOR.toPickup, weight, opacity: 0.95, dashArray: '1 11', lineCap: 'round', className: 'route-dots', interactive: false }}
         />
       )}
-      <Polyline positions={dropOff} pathOptions={{ color, weight: weight * 3.5, opacity: isDelivered ? 0.07 : 0.2, lineCap: 'round', lineJoin: 'round', interactive: false }} />
-      <Polyline positions={dropOff} pathOptions={{ color, weight, opacity: isDelivered ? 0.5 : 0.95, lineCap: 'round', lineJoin: 'round', className: 'route-draw' }} />
+      <Polyline positions={dropOff} pathOptions={{ color, weight: weight * 3.5, opacity: isDelivered ? 0.04 : 0.14, lineCap: 'round', lineJoin: 'round', interactive: false }} />
+      <Polyline positions={dropOff} pathOptions={{ color, weight, opacity: isDelivered ? 0.35 : 1, lineCap: 'round', lineJoin: 'round', className: 'route-draw' }} />
       {!isDelivered && (
         <Polyline
           positions={dropOff}

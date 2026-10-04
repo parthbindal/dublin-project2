@@ -16,7 +16,7 @@ import { EveningSummary, Toasts } from './Highlights';
 import { ImpactStrip } from './ImpactStrip';
 import { ListingDetail } from './ListingDetail';
 import { LiveFeed } from './LiveFeed';
-import { MapHud, MapLegend } from './MapOverlays';
+import { MapBar, MapLegend } from './MapOverlays';
 import { PostSurplus } from './PostSurplus';
 import { PredictionsPanel } from './PredictionsPanel';
 import { ScrollStory } from './ScrollStory';
@@ -29,7 +29,7 @@ const MapView = dynamic(() => import('./MapView'), {
 
 const TICK_MS = 500;
 const SPEEDS = [1, 2, 4] as const; // simulated minutes per tick
-const SOURCE_LINK = 'text-muted underline decoration-white/20 underline-offset-2 transition-colors hover:text-fg hover:decoration-white/60';
+const SOURCE_LINK = 'text-muted underline decoration-line-strong underline-offset-4 transition-colors hover:text-fg hover:decoration-lime';
 
 function downloadCsv(filename: string, csv: string) {
   const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
@@ -40,30 +40,14 @@ function downloadCsv(filename: string, csv: string) {
   window.setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
-/** Moves the soft light on whichever `.spot` card is under the pointer. One listener for the page. */
-function useCardSpotlight() {
-  useEffect(() => {
-    const handleMove = (event: PointerEvent) => {
-      const card = event.target instanceof Element ? event.target.closest('.spot') : null;
-      if (!(card instanceof HTMLElement)) return;
-      const rect = card.getBoundingClientRect();
-      card.style.setProperty('--mx', `${event.clientX - rect.left}px`);
-      card.style.setProperty('--my', `${event.clientY - rect.top}px`);
-    };
-    document.addEventListener('pointermove', handleMove, { passive: true });
-    return () => document.removeEventListener('pointermove', handleMove);
-  }, []);
-}
-
 function Footer() {
   return (
     <footer id="sources" className="mx-auto w-full max-w-[1320px] scroll-mt-6 border-t border-line px-5 py-10 text-xs leading-relaxed text-faint md:px-10">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <p className="flex items-center gap-2 text-sm font-semibold text-fg">
-          <span aria-hidden className="h-2 w-2 rounded-full bg-[image:var(--brand)] shadow-[0_0_10px_var(--pink)]" />
-          SecondServe
+          SecondServe<span className="text-lime">.</span>
         </p>
-        <p>Made with care at Dublin HacX 2026.</p>
+        <p>Made with care at Dublin HacX 2026. Built with Azure AI Foundry, OpenStreetMap, OSRM, Next.js and Leaflet.</p>
       </div>
       <p className="mt-4">This is a demo. The businesses, food banks and volunteers are made up. The map, the streets, the road routes and the AI are real.</p>
       <p className="mt-2">
@@ -109,7 +93,6 @@ export default function Dashboard() {
   const [speed, setSpeed] = useState<number>(2);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [isPosting, setIsPosting] = useState(false);
-  useCardSpotlight();
 
   const isFinished = state.now >= SIM_END;
   const isRunning = isPlaying && !isFinished;
@@ -159,22 +142,24 @@ export default function Dashboard() {
       <Hero onShare={openPosting} />
       <ScrollStory />
       <section id="live" aria-labelledby="live-heading" className="relative scroll-mt-2 pb-16">
-        <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-[700px] bg-[radial-gradient(ellipse_60%_50%_at_50%_0%,oklch(0.73_0.17_295/0.16),transparent_70%)]" />
         <div className="relative mx-auto w-full max-w-[1320px] px-5 md:px-10">
-          <div className="grid grid-cols-1 gap-6 pb-8 pt-12 lg:grid-cols-[1.25fr_1fr] lg:items-end">
-            <div>
-              <p className="eyebrow inline-flex items-center gap-2 rounded-full bg-white/5 px-3 py-1 ring-1 ring-inset ring-line-strong">
-                <span className="live-dot text-mint" /> Live demo · a whole evening
-              </p>
-              <h2 id="live-heading" className="mt-5 text-balance text-[clamp(2.2rem,4.6vw,4rem)] font-semibold leading-[1] tracking-[-0.045em]">
-                Tonight in <span className="accent text-brand">{state.areaName}</span>
+          <p className="label flex flex-wrap justify-between gap-2 border-b border-line pb-3 pt-16">
+            <span>03 / Live demo</span>
+            <span>A whole Saturday evening, simulated on real streets</span>
+          </p>
+          <div className="grid grid-cols-1 gap-x-10 gap-y-8 pb-10 pt-10 lg:grid-cols-12 lg:items-end">
+            <div className="lg:col-span-7">
+              <h2 id="live-heading" className="display text-balance text-[clamp(2.4rem,5vw,4.6rem)] leading-[0.95]">
+                Tonight in <span className="text-lime">{state.areaName}</span>
               </h2>
-              <p className="mt-4 max-w-[54ch] text-lg leading-relaxed text-muted">
+              <p className="mt-5 max-w-[52ch] text-lg leading-relaxed text-muted">
                 Six local food businesses, five food programs and three volunteer drivers. Press play and watch good food find its way to people, one post at a
                 time.
               </p>
             </div>
-            <AreaPicker areaName={state.areaName} onChange={(next) => startOver(next, false)} />
+            <div className="lg:col-span-5">
+              <AreaPicker areaName={state.areaName} onChange={(next) => startOver(next, false)} />
+            </div>
           </div>
           <ControlBar
             now={state.now}
@@ -196,11 +181,11 @@ export default function Dashboard() {
             )}
             <ImpactStrip impact={impact} />
             <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1.75fr)_minmax(340px,1fr)]">
-              <section aria-label="Map" className="map-shell h-[520px] lg:h-[640px]">
+              <section aria-label="Map" className="map-frame h-[520px] lg:h-[640px]">
+                <MapBar state={state} inTransitLbs={impact.inTransitLbs} isRunning={isRunning} />
                 <div className="map-inner">
                   <MapView state={state} selectedId={shown?.id ?? null} onSelect={setSelectedId} />
                   <div className="map-vignette" />
-                  <MapHud state={state} inTransitLbs={impact.inTransitLbs} isRunning={isRunning} />
                   <MapLegend />
                 </div>
               </section>

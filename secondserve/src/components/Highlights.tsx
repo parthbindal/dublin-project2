@@ -17,10 +17,10 @@ export function Toasts({ events, now }: { events: FeedEvent[]; now: number }) {
       {recent.map((event) => {
         const isDelivered = event.kind === 'deliver';
         return (
-          <div key={event.id} className="glass animate-toast-in flex gap-3 rounded-[18px] px-4 py-3 text-sm">
+          <div key={event.id} className="glass animate-toast-in flex gap-3 px-4 py-3 text-sm">
             <span
-              className={`grid h-7 w-7 shrink-0 place-items-center rounded-full ${
-                isDelivered ? 'bg-mint text-bg shadow-[0_0_18px_var(--mint)]' : 'bg-pink text-bg shadow-[0_0_18px_var(--pink)]'
+              className={`grid h-7 w-7 shrink-0 place-items-center ${
+                isDelivered ? 'bg-lime text-lime-ink' : 'bg-red text-bg'
               }`}
             >
               <Icon name={isDelivered ? 'check' : 'alert'} className="h-4 w-4" />
@@ -47,11 +47,9 @@ export function EveningSummary({ impact, areaName, onReplay, onExport }: Summary
       aria-label="Tonight's results"
       className="card animate-sheet-in relative grid gap-5 overflow-hidden p-7 md:grid-cols-[1fr_auto] md:items-end"
     >
-      <div aria-hidden className="pointer-events-none absolute -left-20 -top-32 h-80 w-80 rounded-full bg-[radial-gradient(circle,oklch(0.86_0.16_162/0.35),transparent_70%)]" />
-      <div aria-hidden className="pointer-events-none absolute -right-10 -top-24 h-72 w-72 rounded-full bg-[radial-gradient(circle,oklch(0.84_0.13_212/0.3),transparent_70%)]" />
       <div className="relative">
         <p className="eyebrow !text-mint">That&apos;s a wrap for tonight</p>
-        <h3 className="mt-3 text-[clamp(1.7rem,3vw,2.7rem)] font-semibold leading-[1.05] tracking-[-0.035em]">
+        <h3 className="display mt-3 text-[clamp(1.7rem,3vw,2.7rem)] leading-[1.05]">
           In {areaName}, <span className="text-fresh"><CountUp value={impact.rescuedLbs} startFrom={0} /> lbs</span> of good food found a table. That&apos;s about{' '}
           <span className="accent text-fresh"><CountUp value={impact.meals} startFrom={0} /> meals.</span>
         </h3>

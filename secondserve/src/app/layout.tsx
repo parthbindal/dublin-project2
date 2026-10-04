@@ -1,12 +1,10 @@
 import type { Metadata, Viewport } from 'next';
-import { Geist, Geist_Mono, Instrument_Serif } from 'next/font/google';
+import { Archivo } from 'next/font/google';
 import './globals.css';
 
-// Geist for the interface, Geist Mono for live numbers and labels, and Instrument Serif italic
-// for the single accent phrase in each headline.
-const geist = Geist({ variable: '--font-geist', subsets: ['latin'] });
-const geistMono = Geist_Mono({ variable: '--font-geist-mono', subsets: ['latin'] });
-const serif = Instrument_Serif({ variable: '--font-serif', subsets: ['latin'], weight: '400', style: ['italic'] });
+// One family, Swiss style: Archivo's weight and width axes give heavy wide headlines,
+// condensed uppercase labels (like a departures board) and plain body text.
+const archivo = Archivo({ variable: '--font-archivo', subsets: ['latin'], axes: ['wdth'] });
 
 export const metadata: Metadata = {
   title: 'SecondServe: good food deserves a second serving',
@@ -14,7 +12,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: '#0b0c12',
+  themeColor: '#121211',
   colorScheme: 'dark',
 };
 
@@ -24,7 +22,7 @@ const MOTION_SCRIPT = `try{var m=localStorage.getItem('secondserve.motion');if(m
 
 export default function RootLayout({ children }: LayoutProps<'/'>) {
   return (
-    <html lang="en" className={`${geist.variable} ${geistMono.variable} ${serif.variable} h-full antialiased`} suppressHydrationWarning>
+    <html lang="en" className={`${archivo.variable} h-full antialiased`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: MOTION_SCRIPT }} />
       </head>

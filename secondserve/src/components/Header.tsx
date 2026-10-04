@@ -21,13 +21,13 @@ export function ControlBar({
   now, weekday, areaName, isRunning, isFinished, speed, speeds, onToggleRun, onSpeedChange, onReset, onPost, onExport,
 }: Props) {
   const runLabel = isFinished ? 'Evening finished' : isRunning ? 'Pause' : 'Play the evening';
-  const liveTone = isRunning ? 'text-mint' : 'text-faint';
+  const liveTone = isRunning ? 'text-lime' : 'text-faint';
   return (
-    <div className="glass sticky top-3 z-[700] rounded-[20px] px-3 py-2.5 md:px-4">
+    <div className="glass sticky top-0 z-[700] px-3 py-2.5 md:px-4">
       <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
         <div className="mr-auto flex min-w-0 items-center gap-3">
-          <span className={`grid h-9 w-9 shrink-0 place-items-center rounded-full bg-white/5 ring-1 ring-line-strong ${liveTone}`}>
-            {isRunning ? <span className="live-dot" /> : <span className="h-2 w-2 rounded-full bg-current" />}
+          <span className={`grid h-9 w-9 shrink-0 place-items-center bg-white/5 ring-1 ring-line-strong ${liveTone}`}>
+            {isRunning ? <span className="live-dot" /> : <span className="h-2 w-2 bg-current" />}
           </span>
           <div className="min-w-0 leading-tight">
             <p className="font-mono text-2xl font-medium tabular-nums tracking-tight">{formatClock(now)}</p>
@@ -41,14 +41,14 @@ export function ControlBar({
           <Icon name={isRunning ? 'pause' : 'play'} className="h-4 w-4" />
           {runLabel}
         </button>
-        <div role="group" aria-label="Playback speed" className="flex items-center rounded-full bg-white/5 p-1 ring-1 ring-inset ring-line-strong">
+        <div role="group" aria-label="Playback speed" className="flex items-center bg-white/5 p-1 ring-1 ring-inset ring-line-strong">
           {speeds.map((s) => (
             <button
               key={s}
               type="button"
               onClick={() => onSpeedChange(s)}
               aria-pressed={speed === s}
-              className={`rounded-full px-2.5 py-1 font-mono text-xs font-medium transition-colors ${
+              className={` px-2.5 py-1 font-mono text-xs font-medium transition-colors ${
                 speed === s ? 'bg-fg text-bg' : 'text-muted hover:text-fg'
               }`}
             >

@@ -107,7 +107,7 @@ export function AreaPicker({ areaName, onChange }: Props) {
     <section aria-label="Choose an area" className="card spot p-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <p className="font-semibold tracking-tight">Try it in your own town</p>
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-mint/10 px-2.5 py-0.5 text-xs font-medium text-mint ring-1 ring-inset ring-mint/30">
+        <span className="inline-flex items-center gap-1.5 bg-mint/10 px-2.5 py-0.5 text-xs font-medium text-mint ring-1 ring-inset ring-mint/30">
           <Icon name="pin" className="h-3 w-3" />
           {areaName}
         </span>
